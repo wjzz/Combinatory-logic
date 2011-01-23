@@ -19,27 +19,44 @@
 (print-db *rules*)
 (register-combinator (make-combinator :name 'M) *rules*)
 
-
-
-(defun partition-lisp (lst before after seen-eq)
+(defun partition-list (lst before after seen-eq)
   "Breaks the given list into parts before and after the = character. The = itself is not included."
   (cond ((null lst) (cons (reverse before) (reverse after)))
-	(seen-eq     (partition-lisp (cdr lst) before (cons (car lst) after) seen-eq))
-	((eq (car lst) '=) (partition-lisp (cdr lst) before after t))
-	(t  (partition-lisp (cdr lst) (cons (car lst) before) after nil))))
+	(seen-eq     (partition-list (cdr lst) before (cons (car lst) after) seen-eq))
+	((eq (car lst) '=) (partition-list (cdr lst) before after t))
+	(t  (partition-list (cdr lst) (cons (car lst) before) after nil))))
 
+(defun range-from-zero (last)
+  "Returns a list containing all integers from 0 to last, exclusive."
+  (let
+      ((result nil))
+    (dotimes (value last (reverse result))
+      (push value result))))
+
+(range-from-zero 5)
+
+;; We don't want to store variables as symbols starting with letters, so
+;; we convert the symbols into integers. This way combinators can be named as letters,
+;; according to the tradition.
 (defmacro comb (name &rest rest)
-  ;; break the rest at '='
+  ;; break the rest at '=' and get rid of the symbols used as parameters
+  ;; ie. change B x y z = x (y z) into B 0 1 2 = 0 (1 2) 
   (let*
-      ((result (partition-lisp rest '() '() nil))
+      ((result (partition-list rest '() '() nil))
        (parameters (car result))
        (body       (cdr result))
-       (c          (gensym)))    
+       (c          (gensym))
+       (numbered-params (range-from-zero (length parameters)))
+       (numbered-body   (substitute-values body parameters 
+					   (create-environment parameters numbered-params))))
     `(let ((,c (make-combinator :name       ',name
-				:parameters ',parameters
-				:body       ',body)))
+				:parameters ',numbered-params ;parameters
+				:body       ',numbered-body))) ;body)))
        (register-combinator ,c *rules*))))
 
+
+
+(comb T x y z = x z y)
 (comb M x = x x)
 (comb I x = x)
 (print-db *rules*)
@@ -87,23 +104,37 @@ values from the given environment."
 	((null (cdr expression)) (simplify (car expression)))
 	(t (mapcar #'simplify expression))))
 
+;; (('comp A B) X ...) => (A (B x ...))
+
+(defun compositionp (expression)
+  (and (consp expression)
+       (eq 'comp (first expression))))
+
+
 (defun rewrite-step (expression rule-db)
   "Makes a single rewrite based on the rule-db. The highest term is rewritten."
   (cond 
     ((atom expression) expression)
     ((consp expression)
      (cond
+       ((compositionp (first expression))
+	(let* ((comp-expr (first expression))
+	       (outer     (second comp-expr))
+	       (inner     (third  comp-expr)))
+	  (list outer (list inner (rest expression)))))       
+	  
        ((consp (first expression))
 	      (cons (rewrite-step (first expression) rule-db)
 		    (rest expression)))
+
        ((atom (first expression))
-     (let*
-	 ((combinator (find-combinator (first expression) rule-db))
-	  (parameters (combinator-parameters combinator))
-	  (values     (rest expression))
-	  (body       (combinator-body combinator))
-	  (env        (create-environment parameters values)))
-       (simplify (substitute-values body parameters env))))))))
+	(let*
+	    ((combinator (find-combinator (first expression) rule-db))
+	     (parameters (combinator-parameters combinator))
+	     (values     (rest expression))
+	     (body       (combinator-body combinator))
+	     (env        (create-environment parameters values)))
+	  (simplify (substitute-values body parameters env))))))))
 
 (print-db *rules*)
 
@@ -118,5 +149,80 @@ values from the given environment."
 	  result
 	  (full-rewrite result :print-trace print-trace :max-depth (1- max-depth))))))
 
-(full-rewrite '(M (M (M (M (M M))))) :print-trace 1 :max-depth 1)
-;(full-rewrite 
+(print "-----------------")
+(full-rewrite '((comp M M) I) :print-trace 1)
+(full-rewrite '((comp M M) (comp M M)) :print-trace 1 :max-depth 20)
+
+(full-rewrite '(M (M (M (M (M M)))))   :print-trace 1)
+(full-rewrite '((comp (comp M M) M) I) :print-trace 1 :max-depth 20)
+
+(defstruct theorem-struct
+  :left
+  :right)
+
+(defmacro theorem (name left right)
+  `(setf ,name (make-theorem-struct :left ',left
+				    :right ',right)))
+
+(macroexpand-1 `(theorem simple I (M M)))
+
+(theorem multi-m
+	 I
+	 (M I))
+
+(defun prove-theorem-by-rewriting (thm &optional (max-depth 10))
+  (let
+      ((left  (full-rewrite (theorem-struct-left  thm) :max-depth max-depth))
+       (right (full-rewrite (theorem-struct-right thm) :max-depth max-depth)))
+    (if (equal left right)
+	'success
+	nil)))
+
+(prove-theorem-by-rewriting multi-m) ;; OK!
+(prove-theorem-by-rewriting (theorem test M I)) ;; OK! (can't be done)
+
+(theorem many-ms I (M (M (M (M (M I))))))
+(prove-theorem-by-rewriting many-ms 66) ;; success!
+
+
+
+(defun simplify-expression (expression)
+  "Simplifies a given expression of combinatory logic.
+
+Example transformations:
+((X)) -> X
+((A B) C) -> (A B C)"
+  (cond 
+    ((atom expression)
+	 expression)
+
+    ((consp expression)
+     (cond
+       ; A singleton list doesn't need parens
+       ; (X) -> X
+       ((null (rest expression))
+	(simplify-expression (first expression)))
+
+       ; a nested application can be flattened
+       ; ((A B) C) -> (A B C)
+       ((consp (first expression))
+	(simplify-expression (append (first expression)
+				     (rest expression))))
+
+       ; apply simplify to subexpressions and check if simplify changed anything
+       (t 
+	(let ((result-expression (mapcar #'simplify-expression expression)))
+	  (if (equal expression result-expression)
+	      expression
+	      (simplify-expression result-expression))))))))
+
+;; tests of simplify
+(list (equal 'X 
+	    (simplify-expression '((((X))))))
+     (equal '(A B C D) 
+	    (simplify-expression '(((A B) C) D)))
+     (equal '(A B (C D E))
+	    (simplify-expression '((A B) ((C D) E)))))
+
+(simplify-expression '((A B) C))
+

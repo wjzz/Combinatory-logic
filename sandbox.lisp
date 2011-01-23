@@ -40,4 +40,54 @@
 		      :body       ',body)))
 
 (macroexpand `(comb M x = x x))
-(comb M x = x x)
+(setf M (comb M x = x x))
+(setf I (comb I x = x))
+M
+
+(M @ I)
+
+
+(defmacro install-comb (name &rest rest)
+  ;; break the rest at '='
+  (let*
+      ((result (iter rest '() '() nil))
+       (parameters (car result))
+       (body       (cdr result)))
+    `(defun ,name ,parameters ,body)))
+  ; `(setf (symbol-function ,name)
+;	   #'(lambda ,parameters ,body))))
+
+(macroexpand-1 `(install-comb A x y = x y))
+
+(install-comb
+ M x = x x)
+
+(M M)
+
+
+(subst '(1 2) 'a '(a b a))
+
+(defun create-environment (parameters values)
+  "Creates an environment in which parameters are bound to the given values.
+It is supposed that the values list is at least as long a the parameters list."
+  (let ((m (make-hash-table))
+	(vs values))
+    (dolist (parameter parameters m)
+      (setf (gethash parameter m) (first values))
+      (setf values (rest values)))))
+
+(setf env (create-environment '(x y z) '(1 2 1 10)))
+
+(defun get-value (parameter environment)
+  (gethash parameter environment))
+
+(get-value 'z env)
+
+(defun testing (e &key print-trace)
+  (list e print-trace))
+
+(testing 1)
+
+(testing 1 :print-trace 1)
+
+(subst 'a 1 '(1 2 3 1))

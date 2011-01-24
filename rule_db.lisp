@@ -16,7 +16,9 @@
   "Returns the names of all combinators in the rule database."
   (let ((keys nil))
     (loop for key being the hash-keys of rule-db
-	 do (push key keys))))
+	 do (push key keys))
+    keys))
+    
 
 (defun reset-def-db ()
   (setf *rules* (make-hash-table)))
@@ -37,6 +39,7 @@
 
 (comb K x y = x)
 (rcomb I2 x x = x)
+(get-combinators *rules*)
 (print-def-db)
 
 (reset-def-db)

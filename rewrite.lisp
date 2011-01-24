@@ -17,7 +17,7 @@
 (rcomb T x y z = x (z y))
 
 (print-def-db)
-
+(get-combinators *rules*)
 
 
 ;; ------------------------------
@@ -96,16 +96,20 @@
 		    (rest expression)))
 
        ((atom (first expression))
-	(let*
-	    ((combinator (find-combinator (first expression) rule-db))
-	     (parameters (combinator-parameters combinator))
-	     (split-parameters (break-at (length parameters) (rest expression)))
-	     (values       (car split-parameters))
-	     (rest-of-expr (cdr split-parameters))
-	     (body         (combinator-body combinator))
-	     (env          (create-environment parameters values)))
-	  (simplify-expression (cons (substitute-values body parameters env)
-				     rest-of-expr))))))))
+	(let 
+	    ((combinator (find-combinator (first expression) rule-db)))
+	  ;; If the atom is not the base we assume it's parameter variable and leave it
+	  (if (null combinator)
+	      expression
+	      (let*
+		  ((parameters (combinator-parameters combinator))
+		   (split-parameters (break-at (length parameters) (rest expression)))
+		   (values       (car split-parameters))
+		   (rest-of-expr (cdr split-parameters))
+		   (body         (combinator-body combinator))
+		   (env          (create-environment parameters values)))
+		(simplify-expression (cons (substitute-values body parameters env)
+					   rest-of-expr))))))))))
 
 
 (rewrite-step (rewrite-step '(M I) *rules*) *rules*)
@@ -117,26 +121,57 @@
 (rewrite '(I M))
 (rewrite '(M (M M)))
 
+(defun lazy-rewrite (expression &key print-trace (max-depth 10))
+  (when print-trace
+     (print expression))
+  (if (= 0 max-depth)
+      expression
+      (let ((result (rewrite-step expression *rules*)))
+	(if (equal expression result)
+	    result
+	    (lazy-rewrite result :print-trace print-trace :max-depth (1- max-depth))))))
+
+
 (defun full-rewrite (expression &key print-trace (max-depth 10))
   (when print-trace
      (print expression))
-  (unless (= 0 max-depth)  
-    (let ((result (rewrite-step expression *rules*)))
-      (if (equal expression result)
-	  result
-	  (full-rewrite result :print-trace print-trace :max-depth (1- max-depth))))))
+  (if (= 0 max-depth)
+      expression
+      (cond ((atom expression) expression)
+	    ((consp expression)
+	     (let*
+		 ((exp2 (mapcar (lambda (e)
+				  (full-rewrite e :print-trace print-trace :max-depth (1- max-depth)))
+				expression))
+		  (result (rewrite-step exp2 *rules*)))
+	       (if (equal exp2 result)
+		   result
+		   (full-rewrite result :print-trace print-trace :max-depth (1- max-depth))))))))
+
+
+
+(full-rewrite '(M M))
+(full-rewrite '(M I I I I I))
+(full-rewrite '(M M (I I I))) ;; as opposed to
+(lazy-rewrite '(M M (I I I))) ;; which is not as reduced
+(full-rewrite '(M (M (M (M (M (M I)))))) :max-depth 6)
+(full-rewrite '(M I) :max-depth 2 :print-trace t)
 
 
 ;; TESTS
 ;; TODO tests dont work, other args are ignored
 (print "-----------------")
-(full-rewrite '((comp M M) I) :print-trace 1)
+(lazy-rewrite '((comp M M) I) :print-trace 1)
 ; TODO this was ok, raises problems now (simplify-expression instead of simplify is now used)
-; (full-rewrite '((comp M M) (comp M M)) :print-trace 1 :max-depth 20)
+; (lazy-rewrite '((comp M M) (comp M M)) :print-trace 1 :max-depth 20)
 
-(full-rewrite '(M (M (M (M (M M)))))   :print-trace 1)
-(full-rewrite '((comp (comp M M) M) I) :print-trace 1 :max-depth 20)
+(lazy-rewrite '(M (M (M (M (M M)))))   :print-trace 1)
+(lazy-rewrite '((comp (comp M M) M) I) :print-trace 1 :max-depth 20)
 
+;; a test that shows that rewrite doesn't eval everything possible
+(lazy-rewrite '((M M) (I I))) ;; should be (M M) I
+(full-rewrite '((M M) (I I))) ;; should be (M M) I
+(lazy-rewrite '(I I (M M)))
 
 ;; tests of simplify
 (list (equal 'X 
@@ -148,3 +183,4 @@
 
 (simplify-expression '((A B) C))
 
+(full-rewrite '(I x y))

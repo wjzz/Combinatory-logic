@@ -1,3 +1,5 @@
+(load "helpers.lisp")
+
 (defstruct combinator
   :name
   :parameters
@@ -19,21 +21,7 @@
 (print-db *rules*)
 (register-combinator (make-combinator :name 'M) *rules*)
 
-(defun partition-list (lst before after seen-eq)
-  "Breaks the given list into parts before and after the = character. The = itself is not included."
-  (cond ((null lst) (cons (reverse before) (reverse after)))
-	(seen-eq     (partition-list (cdr lst) before (cons (car lst) after) seen-eq))
-	((eq (car lst) '=) (partition-list (cdr lst) before after t))
-	(t  (partition-list (cdr lst) (cons (car lst) before) after nil))))
 
-(defun range-from-zero (last)
-  "Returns a list containing all integers from 0 to last, exclusive."
-  (let
-      ((result nil))
-    (dotimes (value last (reverse result))
-      (push value result))))
-
-(range-from-zero 5)
 
 ;; We don't want to store variables as symbols starting with letters, so
 ;; we convert the symbols into integers. This way combinators can be named as letters,
@@ -42,7 +30,7 @@
   ;; break the rest at '=' and get rid of the symbols used as parameters
   ;; ie. change B x y z = x (y z) into B 0 1 2 = 0 (1 2) 
   (let*
-      ((result (partition-list rest '() '() nil))
+      ((result (partition-list rest))
        (parameters (car result))
        (body       (cdr result))
        (c          (gensym))
@@ -64,39 +52,6 @@
 ;; use-case
 ; (eval-comb '(M I)) ;; (I I)
 
-
-(defun create-environment (parameters values)
-  "Creates an environment in which parameters are bound to the given values.
-It is supposed that the values list is at least as long a the parameters list."
-  (let ((m (make-hash-table)))
-    (dolist (parameter parameters m)
-      (setf (gethash parameter m) (first values))
-      (setf values (rest values)))))
-
-(defun get-value (parameter environment)
-  "Get the value bound to the given parameter in the given environment."
-  (gethash parameter environment))
-
-
-;; some simple tests
-(defvar env (create-environment '(x y z) '(1 2 1 10)))
-
-(get-value 'z env)
-
-
-(defun substitute-values (expression parameters env)
-  "Substitutes all occurences of the given parameters in the given expression with the
-values from the given environment."
-  (cond
-    ((and (atom expression)
-	  (member expression parameters))
-     (get-value expression env))
-    ((consp expression)
-     (cons (substitute-values (car expression) parameters env)
-	   (substitute-values (cdr expression) parameters env)))
-    (t expression)))
-
-(substitute-values '(x y (x z)) '(x y z) (create-environment '(x y z) '(M (S I) K)))
 
 (defun simplify (expression)
   "Simplifes the expression. If the expression is a singleton list we drop the parens"
@@ -189,9 +144,9 @@ values from the given environment."
 (defun simplify-expression (expression)
   "Simplifies a given expression of combinatory logic.
 
-Example transformations:
-((X)) -> X
-((A B) C) -> (A B C)"
+ Example transformations:
+ ((X)) -> X
+ ((A B) C) -> (A B C)"
   (cond 
     ((atom expression)
 	 expression)

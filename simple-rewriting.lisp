@@ -1,10 +1,3 @@
-(load "helpers.lisp")
-
-(defstruct combinator
-  :name
-  :parameters
-  :body)
-
 (defparameter *rules* (make-hash-table)
   "A lookup table for rewriting rules")
 
@@ -22,31 +15,6 @@
 (register-combinator (make-combinator :name 'M) *rules*)
 
 
-
-;; We don't want to store variables as symbols starting with letters, so
-;; we convert the symbols into integers. This way combinators can be named as letters,
-;; according to the tradition.
-(defmacro comb (name &rest rest)
-  ;; break the rest at '=' and get rid of the symbols used as parameters
-  ;; ie. change B x y z = x (y z) into B 0 1 2 = 0 (1 2) 
-  (let*
-      ((result (partition-list rest))
-       (parameters (car result))
-       (body       (cdr result))
-       (c          (gensym))
-       (numbered-params (range-from-zero (length parameters)))
-       (numbered-body   (substitute-values body parameters 
-					   (create-environment parameters numbered-params))))
-    `(let ((,c (make-combinator :name       ',name
-				:parameters ',numbered-params ;parameters
-				:body       ',numbered-body))) ;body)))
-       (register-combinator ,c *rules*))))
-
-
-
-(comb T x y z = x z y)
-(comb M x = x x)
-(comb I x = x)
 (print-db *rules*)
 
 ;; use-case

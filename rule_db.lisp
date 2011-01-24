@@ -12,6 +12,12 @@
   (setf (gethash (combinator-name comb) rule-db) 
 	comb))
 
+(defun get-combinators (rule-db)
+  "Returns the names of all combinators in the rule database."
+  (let ((keys nil))
+    (loop for key being the hash-keys of rule-db
+	 do (push key keys))))
+
 (defun reset-def-db ()
   (setf *rules* (make-hash-table)))
 

@@ -19,6 +19,12 @@
 (print-def-db)
 
 
+
+;; ------------------------------
+;; --  SIMPLIFING EXPRESSIONS  --
+;; ------------------------------
+
+
 (defun simplify-expression (expression)
   "Simplifies a given expression of combinatory logic.
 
@@ -38,10 +44,10 @@
 
        ; a nested application can be flattened
        ; ((A B) C) -> (A B C)
-       ; TODO
-       ; this won't work with
-       ; (('comp A B) C) !
-       ((consp (first expression))
+       ; notice that if A = comp then this tranformation cannot be performed 
+       ; (in the general case)!
+       ((and (consp (first expression))
+	     (not (eql 'comp (first (first expression)))))
 	(simplify-expression (append (first expression)
 				     (rest expression))))
 
@@ -52,6 +58,15 @@
 	      expression
 	      (simplify-expression result-expression))))))))
 
+
+(simplify-expression '((((A)))))
+(simplify-expression '(((A B) C) D))
+(simplify-expression '((comp A B) C))
+
+
+;; -----------------
+;; --  REWRITING  --
+;; -----------------
 
 
 (defun compositionp (expression)
@@ -70,7 +85,9 @@
      (cond
        ((compositionp (first expression))
 	(let* ((comp-expr (first expression))
+	       ; comp-expr = ('comp outer inner)
 	       (outer     (second comp-expr))
+	       ; TODO this will work only for exactly two functions composed
 	       (inner     (third  comp-expr)))
 	  (list outer (list inner (rest expression)))))       
 	  
@@ -82,14 +99,23 @@
 	(let*
 	    ((combinator (find-combinator (first expression) rule-db))
 	     (parameters (combinator-parameters combinator))
-	     (values     (rest expression))
-	     (body       (combinator-body combinator))
-	     (env        (create-environment parameters values)))
-	  (simplify-expression (substitute-values body parameters env))))))))
+	     (split-parameters (break-at (length parameters) (rest expression)))
+	     (values       (car split-parameters))
+	     (rest-of-expr (cdr split-parameters))
+	     (body         (combinator-body combinator))
+	     (env          (create-environment parameters values)))
+	  (simplify-expression (cons (substitute-values body parameters env)
+				     rest-of-expr))))))))
 
 
 (rewrite-step (rewrite-step '(M I) *rules*) *rules*)
 
+(defun rewrite (expression)
+  (rewrite-step expression *rules*))
+
+(print-def-db)
+(rewrite '(I M))
+(rewrite '(M (M M)))
 
 (defun full-rewrite (expression &key print-trace (max-depth 10))
   (when print-trace
@@ -102,6 +128,7 @@
 
 
 ;; TESTS
+;; TODO tests dont work, other args are ignored
 (print "-----------------")
 (full-rewrite '((comp M M) I) :print-trace 1)
 ; TODO this was ok, raises problems now (simplify-expression instead of simplify is now used)

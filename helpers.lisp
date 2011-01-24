@@ -30,6 +30,17 @@
 (range-from-zero 5)
 
 
+(defun break-at (n lst)
+  "Splits the given list into two parts, the first one being the first n elements."
+  (let ((first nil))
+    (dotimes (i n)
+      (push (first lst) first)
+      (setf lst (rest lst)))
+    (cons (reverse first) lst)))
+
+(break-at 4 (range-from-zero 10))
+
+
 ;; ---------------------
 ;; --  SUBSTITUTIONS  --
 ;; ---------------------

@@ -133,8 +133,8 @@
 
 
 (defun full-rewrite (expression &key print-trace (max-depth 10))
-  (when print-trace
-     (print expression))
+;  (when print-trace
+;    (print expression))
   (if (= 0 max-depth)
       expression
       (cond ((atom expression) expression)
@@ -144,6 +144,8 @@
 				  (full-rewrite e :print-trace print-trace :max-depth (1- max-depth)))
 				expression))
 		  (result (rewrite-step exp2 *rules*)))
+	       (when print-trace 
+		 (print exp2))
 	       (if (equal exp2 result)
 		   result
 		   (full-rewrite result :print-trace print-trace :max-depth (1- max-depth))))))))

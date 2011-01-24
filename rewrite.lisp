@@ -104,12 +104,16 @@
 	      (let*
 		  ((parameters (combinator-parameters combinator))
 		   (split-parameters (break-at (length parameters) (rest expression)))
-		   (values       (car split-parameters))
-		   (rest-of-expr (cdr split-parameters))
-		   (body         (combinator-body combinator))
-		   (env          (create-environment parameters values)))
-		(simplify-expression (cons (substitute-values body parameters env)
-					   rest-of-expr))))))))))
+		   (values       (car split-parameters)))
+		(if (< (length values)
+		       (length parameters))
+		    expression
+		    (let* 
+			((rest-of-expr (cdr split-parameters))
+			 (body         (combinator-body combinator))
+			 (env          (create-environment parameters values)))
+		      (simplify-expression (cons (substitute-values body parameters env)
+						 rest-of-expr))))))))))))
 
 
 (rewrite-step (rewrite-step '(M I) *rules*) *rules*)

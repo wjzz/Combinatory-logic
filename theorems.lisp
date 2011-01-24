@@ -42,6 +42,6 @@
 
 (prove-theorem (theorem d_def (B B B x y z w) (x (y z w))))
 
-(rewrite (rewrite (rewrite (rewrite '(B B B x y z w)))))
 (lazy-rewrite '(B B B x y z w))
 (full-rewrite '(B B B x y z w) :print-trace 1)
+

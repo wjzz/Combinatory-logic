@@ -38,6 +38,9 @@
 
        ; a nested application can be flattened
        ; ((A B) C) -> (A B C)
+       ; TODO
+       ; this won't work with
+       ; (('comp A B) C) !
        ((consp (first expression))
 	(simplify-expression (append (first expression)
 				     (rest expression))))
@@ -97,6 +100,8 @@
 	  result
 	  (full-rewrite result :print-trace print-trace :max-depth (1- max-depth))))))
 
+
+;; TESTS
 (print "-----------------")
 (full-rewrite '((comp M M) I) :print-trace 1)
 ; TODO this was ok, raises problems now (simplify-expression instead of simplify is now used)

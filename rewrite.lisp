@@ -15,7 +15,7 @@
 (rcomb K x y = x)
 (rcomb B x y z = x (y z))
 (rcomb T x y z = x (z y))
-
+(rcomb S x y z = x z (y z))
 (print-def-db)
 (get-combinators *rules*)
 

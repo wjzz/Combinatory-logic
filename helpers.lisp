@@ -18,7 +18,18 @@
 (partition-list '(X Y = Y (X X)))
 
 
+(defun range (first last)
+  "Returns a list containing all intergers from first to last, inclusice"
+  (let ((result nil))
+    (loop
+       (if (< last first)
+	   (return result)
+	   (progn
+	     (push last result)
+	     (decf last))))))
 
+(range 1 10)
+(range 5 2)
 
 (defun range-from-zero (last)
   "Returns a list containing all integers from 0 to last, exclusive."

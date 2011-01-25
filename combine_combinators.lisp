@@ -129,7 +129,9 @@
 (setf I (spec (x) (x) (S K)))
 
 (prove-theorem (theorem (S K K x) x))
-(reify I 6)
+(reify I)
 
 (rewrite '(S K S x))
 (rewrite (rewrite '(S K K x)))
+
+(reify (spec (x y z) (x (y z)) (S K I)) 4)

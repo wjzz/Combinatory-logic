@@ -111,27 +111,27 @@
   (iter 1))
 
 (setf B (spec (x y z) (x (y z)) (B)))
-(reify B)
+; (reify B)
 
 
 (setf D (spec (x y z w)
 	     (x y (z w))
 	     (B)))
 
-(reify D)
+; (reify D)
 
 
 (setf triple (spec (x y z w)
 		   (x (y z w))
 		   (B)))
-(reify triple)
+; (reify triple)
 
 (setf I (spec (x) (x) (S K)))
 
 (prove-theorem (theorem (S K K x) x))
-(reify I)
+; (reify I)
 
 (rewrite '(S K S x))
 (rewrite (rewrite '(S K K x)))
 
-(reify (spec (x y z) (x (y z)) (S K I)) 4)
+; (reify (spec (x y z) (x (y z)) (S K I)) 4)

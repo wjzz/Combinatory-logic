@@ -1,7 +1,7 @@
 A simple tool for playing with combinatorial logic. 
 
 The main feature is going to be a module for generating functions that adhere to a given specification. 
-This is going to be usefull for some logic puzzles from the book 'To mock a mockingbird' by R.Smullyan.
+This is going to be useful for some logic puzzles from the book 'To mock a mockingbird' by R.Smullyan.
 
 Example. Having only B (where B x y z = x (y z)) build a combinator C that satisfies
   C x y z w = x y (z w).

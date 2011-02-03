@@ -19,6 +19,44 @@
 
 
 
+(defun combine-results (xs ys acc)
+  (let ((result acc))
+    (dolist (x xs)
+      (dolist (y ys)
+	(push (cons x y) result)))
+    result))
+
+;T (combine-results '(1 2) '(a b c) '(start))
+
+
+(defun generate-less-mem (count available-combs table)
+  (let ((result (gethash count table)))
+    (if result
+	result
+	(let ((new-result (generate-less-mem-iter count available-combs table)))
+	  (setf (gethash count table) new-result)
+	  new-result))))
+
+(defun generate-less-mem-iter (count available-combs table)
+  (if (= 1 count)
+      available-combs
+      (let (results)
+	(dotimes (n (1- count))
+	  (let ((left  (generate-less-mem (1+ n)        available-combs table))
+		(right (generate-less-mem (- count n 1) available-combs table)))
+	     (setf results (combine-results left right results))))
+	results)))
+
+(defun generate-combs (count available-combs)
+  (let ((table (make-hash-table)))
+    (generate-less-mem-iter count available-combs table)))
+
+(generate-combs 2 '(M B I))
+
+
+
+
+
 
 ;; use case
 ; (defvar D (spec D x y z = x z y))
@@ -28,71 +66,6 @@
 ;       using B M I 
 ;       in 100 steps) ;; generate a D by applying only B, M and I
 ;; returns nil if we werent able to find one
-
-(defun mappend (f lst)
-  ;(apply #'append (mapcar f lst)))
-  (reduce #'append (mapcar f lst) :initial-value nil))
-
-(mappend (lambda (x) (range-from-zero x)) '(1 2 3 4))
-
-(defun partitions-iter (n k)
-  "Returns a list of all partitions of the number n into k non-empty and less than n slots.
-  A parition is represented by a list of values in the respective slots."
-  (cond ((= 0 k) nil)
-	((= 0 n) nil)
-	((= 1 k) `((,n)))
-	((< 1 k)
-	 (let 
-	     ((firsts (range 1 (1- n))))
-	   (mappend (lambda (first) 
-		      (mapcar (lambda (solution)
-				(cons first solution))
-			      (partitions-iter (- n first) (1- k))))
-		    firsts)))))
-
-(partitions-iter 10 0)
-(partitions-iter 10 1)
-(partitions-iter 4 3)
-
-(defun partitions (n)
-  "Returns a list of all partitions of n into at least 2 non-empty stots."
-  (mappend (lambda (k) (partitions-iter n k))
-	   (range 2 n)))
-		
-	   
-(partitions 4)
-
-(defun cart-prod (lst)
-  (if (null lst) 
-      (list nil)
-      (let ((smaller (cart-prod (rest lst)))
-	    (heads   (first lst)))
-	(mappend (lambda (x) 
-		  (mapcar (lambda (solution)
-			    (cons x solution))
-			  smaller))
-		heads))))
-
-(cart-prod '((1 2) (a b c)))
-
-
-
-;; basic case
-(defun generate-combs (count available-combs)
-  (cond ((= 1 count) available-combs)
-	((< 1 count) 
-	 (let ((parts (partitions count)))
-	   (mappend (lambda (partition)
-		      (cart-prod (mapcar (lambda (cnt)
-					   (generate-combs cnt available-combs))
-					 partition)))
-		    parts)))))
-	   
-      
-
-(generate-combs 2 '(M B I))
-
-
 
 
 (defun build-theorem (comb spec)

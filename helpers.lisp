@@ -101,3 +101,51 @@ values from the given environment."
 
 (subst-many '(+ x y z) '(x z) '(1 3))
 (subst-many '(x y (x z)) '(x y z) '(M (S I) K))
+
+
+(defun mappend (f lst)
+  ;(apply #'append (mapcar f lst)))
+  (reduce #'append (mapcar f lst) :initial-value nil))
+
+(mappend (lambda (x) (range-from-zero x)) '(1 2 3 4))
+
+(defun partitions-iter (n k)
+  "Returns a list of all partitions of the number n into k non-empty and less than n slots.
+  A parition is represented by a list of values in the respective slots."
+  (cond ((= 0 k) nil)
+	((= 0 n) nil)
+	((= 1 k) `((,n)))
+	((< 1 k)
+	 (let 
+	     ((firsts (range 1 (1- n))))
+	   (mappend (lambda (first) 
+		      (mapcar (lambda (solution)
+				(cons first solution))
+			      (partitions-iter (- n first) (1- k))))
+		    firsts)))))
+
+(partitions-iter 10 0)
+(partitions-iter 10 1)
+(partitions-iter 4 3)
+
+(defun partitions (n)
+  "Returns a list of all partitions of n into at least 2 non-empty stots."
+  (mappend (lambda (k) (partitions-iter n k))
+	   (range 2 n)))
+		
+	   
+(partitions 4)
+
+(defun cart-prod (lst)
+  (if (null lst) 
+      (list nil)
+      (let ((smaller (cart-prod (rest lst)))
+	    (heads   (first lst)))
+	(mappend (lambda (x) 
+		  (mapcar (lambda (solution)
+			    (cons x solution))
+			  smaller))
+		heads))))
+
+(cart-prod '((1 2) (a b c)))
+

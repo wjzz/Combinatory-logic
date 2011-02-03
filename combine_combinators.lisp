@@ -30,7 +30,8 @@
 ;; returns nil if we werent able to find one
 
 (defun mappend (f lst)
-  (apply #'append (mapcar f lst)))
+  ;(apply #'append (mapcar f lst)))
+  (reduce #'append (mapcar f lst) :initial-value nil))
 
 (mappend (lambda (x) (range-from-zero x)) '(1 2 3 4))
 
@@ -90,6 +91,8 @@
       
 
 (generate-combs 2 '(M B I))
+
+
 
 
 (defun build-theorem (comb spec)

@@ -1,3 +1,12 @@
+(defmacro unit-test (expr)
+  `(progn 
+     (write ',expr)
+     (format t "~%")
+     (write ,expr)
+     (format t "~%~%")
+     ,expr))
+;  `,expr)
+
 (defun partition-list (lst &optional before after seen-eq)
   "Breaks the given list into parts before and after the = character. The = itself is not included."
   (cond ((null lst) (cons (reverse before) 
@@ -15,7 +24,8 @@
 			    after 
 			    nil))))
 
-(partition-list '(X Y = Y (X X)))
+(unit-test 
+ (partition-list '(X Y = Y (X X))))
 
 
 (defun range (first last)
@@ -28,8 +38,8 @@
 	     (push last result)
 	     (decf last))))))
 
-(range 1 10)
-(range 5 2)
+(unit-test (range 1 10))
+(unit-test (range 5 2))
 
 (defun range-from-zero (last)
   "Returns a list containing all integers from 0 to last, exclusive."
@@ -38,7 +48,7 @@
     (dotimes (value last (reverse result))
       (push value result))))
 
-(range-from-zero 5)
+(unit-test (range-from-zero 5))
 
 
 (defun break-at (n lst)
@@ -50,8 +60,8 @@
       (setf lst (rest lst)))
     (cons (reverse first) lst)))
 
-(break-at 4 (range-from-zero 10))
-(break-at 5 '(1 2 3))
+(unit-test (break-at 4 (range-from-zero 10)))
+(unit-test (break-at 5 '(1 2 3)))
 
 ;; ---------------------
 ;; --  SUBSTITUTIONS  --
@@ -71,8 +81,9 @@ It is supposed that the values list is at least as long a the parameters list."
       (setf values (rest values)))))
 
 ;; some simple tests
-(defvar env (create-environment '(x y z) '(1 2 1 10)))
-(get-value 'z env)
+(unit-test (progn
+	     (defvar env (create-environment '(x y z) '(1 2 1 10)))
+	     (get-value 'z env)))
 
 
 
@@ -89,7 +100,8 @@ values from the given environment."
     (t expression)))
 
 
-(substitute-values '(x y (x z)) '(x y z) (create-environment '(x y z) '(M (S I) K)))
+(unit-test 
+ (substitute-values '(x y (x z)) '(x y z) (create-environment '(x y z) '(M (S I) K))))
 
 
 (defun subst-many (expression parameters values)
@@ -99,15 +111,17 @@ values from the given environment."
   (substitute-values expression parameters (create-environment parameters values)))
 
 
-(subst-many '(+ x y z) '(x z) '(1 3))
-(subst-many '(x y (x z)) '(x y z) '(M (S I) K))
+(unit-test (subst-many '(+ x y z) '(x z) '(1 3)))
+(unit-test (subst-many '(x y (x z)) '(x y z) '(M (S I) K)))
 
 
 (defun mappend (f lst)
   ;(apply #'append (mapcar f lst)))
   (reduce #'append (mapcar f lst) :initial-value nil))
 
-(mappend (lambda (x) (range-from-zero x)) '(1 2 3 4))
+(unit-test 
+ (mappend (lambda (x) (range-from-zero x)) '(1 2 3 4)))
+
 
 (defun partitions-iter (n k)
   "Returns a list of all partitions of the number n into k non-empty and less than n slots.
@@ -124,9 +138,9 @@ values from the given environment."
 			      (partitions-iter (- n first) (1- k))))
 		    firsts)))))
 
-(partitions-iter 10 0)
-(partitions-iter 10 1)
-(partitions-iter 4 3)
+(unit-test (partitions-iter 10 0))
+(unit-test (partitions-iter 10 1))
+(unit-test (partitions-iter 4 3))
 
 (defun partitions (n)
   "Returns a list of all partitions of n into at least 2 non-empty stots."
@@ -134,7 +148,7 @@ values from the given environment."
 	   (range 2 n)))
 		
 	   
-(partitions 4)
+(unit-test (partitions 4))
 
 (defun cart-prod (lst)
   (if (null lst) 
@@ -147,5 +161,5 @@ values from the given environment."
 			  smaller))
 		heads))))
 
-(cart-prod '((1 2) (a b c)))
+(unit-test (cart-prod '((1 2) (a b c))))
 

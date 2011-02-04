@@ -1,12 +1,5 @@
 (load "rule_db.lisp")
 
-;; (defun simplify (expression)
-;;   "Simplifes the expression. If the expression is a singleton list we drop the parens"
-;;   (cond ((atom expression) expression)
-;; 	((null (cdr expression)) (simplify (car expression)))
-;; 	(t (mapcar #'simplify expression))))
-
-
 ; Some combinators 
 (reset-def-db)
 

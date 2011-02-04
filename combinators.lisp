@@ -26,7 +26,7 @@
 
 
 ;; TESTS
-(comb B x y z = x (y z))
-(comb T x y z = x z y)
-(comb M x = x x)
-(comb I x = x)
+(unit-test (comb B x y z = x (y z)))
+(unit-test (comb T x y z = x z y))
+(unit-test (comb M x = x x))
+(unit-test (comb I x = x))

@@ -33,14 +33,15 @@
 
 
 ;; TESTS
-(register-combinator (make-combinator :name 'M) *rules*)
 
-(print-def-db)
+;; (register-combinator (make-combinator :name 'M) *rules*)
 
-(comb K x y = x)
-(rcomb I2 x x = x)
-(get-combinators *rules*)
-(print-def-db)
+;; (print-def-db)
 
-(reset-def-db)
-(print-def-db)
+;; (comb K x y = x)
+;; (rcomb I2 x x = x)
+;; (get-combinators *rules*)
+;; (print-def-db)
+
+;; (reset-def-db)
+;; (print-def-db)

@@ -10,7 +10,9 @@
 
 (unit-test (combine-results '(1 2) '(a b c) '(start)))
 
-
+; ----------------
+; GENERATE TREES -
+; ----------------
 
 (defun generate-less-mem (count available-combs table)
   (let ((result (gethash count table)))
@@ -38,3 +40,23 @@
     (generate-less-mem-iter count available-combs table)))
 
 (unit-test (generate-combs 2 '(M B I)))
+
+; --------------------------
+; CONVERT TREE TO COMBINATOR
+; --------------------------
+
+(defun tree->nested-lists-iter (tree)
+  (if (atom tree)
+      tree
+      (let ((ncar (tree->nested-lists-iter (car tree)))
+	    (ncdr (tree->nested-lists-iter (cdr tree))))
+	(list ncar ncdr))))
+
+(defun tree->nested-lists (tree)
+  (simplify-expression (tree->nested-lists-iter tree)))
+
+
+(unit-test (tree->nested-lists '(M . I)))
+(unit-test (tree->nested-lists 'I))
+(unit-test (tree->nested-lists '((M . S) . I)))
+(unit-test (tree->nested-lists '(I . (M . S))))

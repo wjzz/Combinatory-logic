@@ -1,4 +1,4 @@
-
+(load "specification.lisp")
 
 (defun reify (spec &optional (max-count 5))
   (defun iter (count)

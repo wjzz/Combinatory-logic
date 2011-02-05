@@ -1,0 +1,25 @@
+;
+; Basic combinators
+; 
+
+M x = x x
+I x = x
+K x y = x
+L x y = x (y y)
+
+B x y z = x (y z)
+D x y z w = x y (z w)
+B1 x y z w = x (y z w)
+E x y z w v = x y (z w v)
+B2 x y z w y = x y z (w v)
+B3 x y z w = x (y (z w))
+D2 x y z w v = x (y z) (w v)
+
+S x y z = x y (x z)
+
+; Simple implementation queries
+
+express I using S K ; symbols-count 3
+express D using B   ; find-all t 
+
+find X such-that X X = X using L

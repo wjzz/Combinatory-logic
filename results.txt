@@ -1,0 +1,9 @@
+C from B and T
+
+Trying n = 8
+((B (B (T (B B T)) B) T) (B (T (B B T)) (B B T)))
+Trying n = 9
+((B (B (T (B B T) T) B) T) (B (B (B T (B B) T) B) T) (B (B (T (T T (B B))) B) T) (B (B (T (T B B T)) B) T) (B (B B T (B B T) B) T) (B (T (T (B B T)) B B) T)
+ (B (T B (B (T (B B T)))) T) (B (B (T (B B T))) (B B) T) (B B (B (T (B B T))) B T) (T (B (T (B B T)) B) B T) (B (T (B B T) T) (B B T))
+ (B (B T (B B) T) (B B T)) (B (T (T T (B B))) (B B T)) (B (T (T B B T)) (B B T)) (B B T (B B T) (B B T)) (T (T (B B T)) B (B B T))
+ (B (T (B B T)) (T T (B B))) (B (T (B B T)) (T B B T)) (T (B B T) (B (T (B B T)))) (T T (B (B (T (B B T)) B))))

@@ -19,3 +19,4 @@
   (make-theorem-struct :left  (specification-body spec)
 		       :right (cons comb (specification-parameters spec))))
 
+

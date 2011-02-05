@@ -9,8 +9,8 @@
 (rcomb B x y z = x (y z))
 (rcomb T x y z = x (z y))
 (rcomb S x y z = x z (y z))
-(print-def-db)
-(get-combinators *rules*)
+;(print-def-db)
+;(get-combinators *rules*)
 
 
 ;; ------------------------------
@@ -158,11 +158,11 @@
 
 
 ;; TESTS
-;; TODO tests dont work, other args are ignored
 (print "-----------------")
 (lazy-rewrite '((comp M M) I) :print-trace 1)
-; TODO this was ok, raises problems now (simplify-expression instead of simplify is now used)
-; (lazy-rewrite '((comp M M) (comp M M)) :print-trace 1 :max-depth 20)
+
+;; this a nasty example, because the rewriting diverges
+(lazy-rewrite '((comp M M) (comp M M)) :print-trace 1 :max-depth 20)
 
 (lazy-rewrite '(M (M (M (M (M M)))))   :print-trace 1)
 (lazy-rewrite '((comp (comp M M) M) I) :print-trace 1 :max-depth 20)

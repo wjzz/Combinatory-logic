@@ -4,8 +4,6 @@
   :left
   :right)
 
-;; TODO
-;; split theorem into constructing and a saving macro
 (defmacro theorem (left right)
   `(make-theorem-struct :left ',left
 			:right ',right))
@@ -38,6 +36,7 @@ simple
 		       ((strict)   #'full-rewrite)
 		       (otherwise  #'lazy-rewrite))))
     (prove-theorem-by-rewriting thm max-depth rewrite-func)))
+
 
 (prove-theorem-by-rewriting multi-m) ;; OK!
 (prove-theorem-by-rewriting (theorem M I)) ;; OK! (can't be done)

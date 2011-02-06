@@ -26,6 +26,9 @@
 (defun print-def-db ()
   (print *rules*))
 
+(defun get-def-db ()
+  *rules*)
+
 
 (defmacro rcomb (name &rest rest)
   "Creates a combinator and registers it in the default rule-database"

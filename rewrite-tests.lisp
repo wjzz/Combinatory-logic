@@ -12,13 +12,6 @@
 (get-combinators *rules*)
 
 
-;; SIMPLIFY EXPRESSION
-(unit-test (simplify-expression '((((A))))))
-(unit-test (simplify-expression '(((A B) C) D)))
-(unit-test (simplify-expression '((comp A B) C)))
-(unit-test (simplify-expression '(A ((B C) D))))
-
-
 ;; REWRITES
 
 (unit-test (get-combinators *rules*))

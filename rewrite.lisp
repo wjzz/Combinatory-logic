@@ -1,43 +1,5 @@
 (load "rule_db.lisp")
 
-;; ------------------------------
-;; --  SIMPLIFING EXPRESSIONS  --
-;; ------------------------------
-
-
-(defun simplify-expression (expression)
-  "Simplifies a given expression of combinatory logic.
-
- Example transformations:
- ((X)) -> X
- ((A B) C) -> (A B C)"
-  (cond 
-    ((atom expression)
-	 expression)
-
-    ((consp expression)
-     (cond
-       ; A singleton list doesn't need parens
-       ; (X) -> X
-       ((null (rest expression))
-	(simplify-expression (first expression)))
-
-       ; a nested application can be flattened
-       ; ((A B) C) -> (A B C)
-       ((consp (first expression))
-	(simplify-expression (append (first expression)
-				     (rest expression))))
-
-       ; apply simplify to subexpressions and check if simplify changed anything
-       ; (A ((B C) D) -> (A (B C D))
-       (t 
-	(let ((result-expression (mapcar #'simplify-expression expression)))
-	  (if (equal expression result-expression)
-	      expression
-	      (simplify-expression result-expression))))))))
-
-
-
 ;; -----------------
 ;; --  REWRITING  --
 ;; -----------------

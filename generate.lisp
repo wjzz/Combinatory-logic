@@ -1,4 +1,5 @@
-(load "rewrite.lisp")
+(load "helpers.lisp")
+
 
 (defun combine-results (xs ys acc)
   "Generate all possible pairs and append them to acc."

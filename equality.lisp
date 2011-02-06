@@ -38,7 +38,7 @@
 
 
 
-(defun prove-equality (thm &optional (norm-strategy 'strict) (max-depth 10))
+(defun prove-equality (thm &optional (norm-strategy 'strict) (max-depth 5))
   (let 
       ((rewrite-func (case norm-strategy
 		       ((strict)   #'full-rewrite)

@@ -1,12 +1,17 @@
 (load "specification.lisp")
 (load "example-combinators.lisp")
 
-(get-combinators (get-def-db))
-(setf code `(express T :using (S K)))
-(macroexpand code)
-(eval code)
+(unit-test (such-that->equality '(V Y = X)))
 
-(unit-test (express B :using (S K)
-		      :search-type first
-		      :count-from 1
-		      :count-to 10))
+
+(unit-test (build-comb L :such-that (L = L L)
+		         :using (S K)
+		         :search-type first
+			 :count-from 3
+			 :count-to   5)) 
+
+;; this one doesn't work if the rule-db is not properly initialized
+(unit-test(express B :using (S K)
+		   :search-type first
+		   :count-from 1
+		   :count-to 10))

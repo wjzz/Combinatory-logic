@@ -14,11 +14,9 @@
     (make-equality-struct :left (car parts)
 			  :right (cdr parts))))
 
-(unit-test (such-that->equality '(V Y = X)))
 
 
-
-(defmacro build-comb (comb-name &key such-that using (search-type 'all) (count-from 1) (count-to 10))
+(defmacro build-comb (comb-name &key such-that using (search-type 'all) (count-from 1) (count-to 3))
   `(make-specification 
     :comb-name ',comb-name
     :equality (such-that->equality ',such-that)
@@ -28,15 +26,11 @@
     :count-to   ,count-to    
     ))
 
-(unit-test (build-comb L :such-that (L = L L)
-		         :using (S K)
-		         :search-type first
-			 :count-from 3
-			 :count-to   5)) 
 
 
-(defmacro express (comb-name &key using (search-type 'all) (count-from 1) (count-to 10))
+(defmacro express (comb-name &key using (search-type 'all) (count-from 1) (count-to 3))
   (let*
+      ;; what happens if comb is not found?
       ((comb (find-combinator comb-name (get-def-db)))
        (left (cons comb-name (combinator-parameters comb)))
        (right (combinator-body comb)))
@@ -48,8 +42,3 @@
 		 :count-to ,count-to
 		 )))
 
-
-(unit-test(express B :using (S K)
-		   :search-type first
-		   :count-from 1
-		   :count-to 10))

@@ -1,6 +1,29 @@
 (load "helpers.lisp")
 
 
+; --------------------------
+; CONVERT TREE TO COMBINATOR
+; --------------------------
+
+(defun tree->nested-lists-iter (tree)
+  (if (atom tree)
+      tree
+      (let ((ncar (tree->nested-lists-iter (car tree)))
+	    (ncdr (tree->nested-lists-iter (cdr tree))))
+	(list ncar ncdr))))
+
+(defun tree->nested-lists (tree)
+  (simplify-expression (tree->nested-lists-iter tree)))
+
+
+(unit-test (tree->nested-lists '(M . I)))
+(unit-test (tree->nested-lists 'I))
+(unit-test (tree->nested-lists '((M . S) . I)))
+(unit-test (tree->nested-lists '(I . (M . S))))
+
+
+
+
 (defun combine-results (xs ys acc)
   "Generate all possible pairs and append them to acc."
   (let ((result acc))
@@ -36,28 +59,8 @@
 
 
 (defun generate-combs (count available-combs)
-  "Generate all trees with exactly count leaves, with leaves being the elements of available-combs."
+  "Generate all possible expression build with combinators from available-combs and having exactly count combinators."
   (let ((table (make-hash-table)))
-    (generate-less-mem-iter count available-combs table)))
+    (mapcar #'tree->nested-lists (generate-less-mem-iter count available-combs table))))
 
-(unit-test (generate-combs 2 '(M B I)))
-
-; --------------------------
-; CONVERT TREE TO COMBINATOR
-; --------------------------
-
-(defun tree->nested-lists-iter (tree)
-  (if (atom tree)
-      tree
-      (let ((ncar (tree->nested-lists-iter (car tree)))
-	    (ncdr (tree->nested-lists-iter (cdr tree))))
-	(list ncar ncdr))))
-
-(defun tree->nested-lists (tree)
-  (simplify-expression (tree->nested-lists-iter tree)))
-
-
-(unit-test (tree->nested-lists '(M . I)))
-(unit-test (tree->nested-lists 'I))
-(unit-test (tree->nested-lists '((M . S) . I)))
-(unit-test (tree->nested-lists '(I . (M . S))))
+(unit-test (generate-combs 2 '(I B M)))

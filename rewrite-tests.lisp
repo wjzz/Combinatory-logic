@@ -24,8 +24,7 @@
 
 (unit-test (lazy-rewrite '(B M M I) :print-trace 1))
 
-;; this a nasty example, because the rewriting diverges
-(unit-test (lazy-rewrite '(B M M (B M M)) :print-trace 1 :max-depth 10))
+
 
 
 (unit-test (lazy-rewrite '(M (M (M (M (M M)))))))

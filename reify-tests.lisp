@@ -74,4 +74,22 @@
 			       )))
     (unit-test (reify diverging :verbose :t :max-depth 7))))
 
-(simple-diverging)
+; (simple-diverging)
+
+
+;; this a nasty example, because the rewriting diverges
+(defun prove-with-history (comb1 comb2)
+  (let
+      ((a (multiple-value-list (full-rewrite comb1 :max-depth 10)))
+       (b (multiple-value-list (full-rewrite comb2 :max-depth 10))))
+    (intersection (second a) (second b) :test #'equal)))
+
+(defvar lft '(B M M (B M M)))
+(defvar rht '((B M M (B M M))(B M M (B M M))))
+(unit-test (prove-with-history lft rht))
+
+
+(rcomb I x = x)
+(unit-test (prove-with-history '(M I) '(M (M (M I)))))
+
+(unit-test (full-rewrite '(M (M (M I)))))

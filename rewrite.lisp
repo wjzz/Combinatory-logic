@@ -50,25 +50,28 @@
 
 
 
-(defun lazy-rewrite (expression &key print-trace (max-depth 10))
+(defun lazy-rewrite (expression &key history print-trace (max-depth 10))
   (when print-trace
      (print expression))
   (if (= 0 max-depth)
-      expression
+      (values expression (cons expression history))
       (let ((result (rewrite-step expression *rules*)))
 	(if (equal expression result)
-	    result
-	    (lazy-rewrite result :print-trace print-trace :max-depth (1- max-depth))))))
+	    (values result (cons result history))
+	    (lazy-rewrite result :history (cons expression history)
+			         :print-trace print-trace 
+				 :max-depth (1- max-depth))))))
 
 
 
 
-(defun full-rewrite (expression &key print-trace (max-depth 10))
+(defun full-rewrite (expression &key history print-trace (max-depth 10))
 ;  (when print-trace
 ;    (print expression))
   (if (= 0 max-depth)
-      expression
-      (cond ((atom expression) expression)
+      (values expression (cons expression history))
+      (cond ((atom expression) 
+	     (values expression (cons expression history)))
 	    ((consp expression)
 	     (let*
 		 ((exp2 (mapcar (lambda (e)
@@ -78,5 +81,7 @@
 	       (when print-trace 
 		 (print exp2))
 	       (if (equal exp2 result)
-		   result
-		   (full-rewrite result :print-trace print-trace :max-depth (1- max-depth))))))))
+		   (values result (cons result history))
+		   (full-rewrite result :history (cons expression history)
+				        :print-trace print-trace 
+					:max-depth (1- max-depth))))))))

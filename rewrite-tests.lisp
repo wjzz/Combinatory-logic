@@ -26,39 +26,35 @@
 (unit-test (rewrite '(M (M M))))
 (unit-test (rewrite '(X (I M))))
 (unit-test (rewrite '((comp I M) X))) ;; this mustn't work
+(unit-test (rewrite '(B I M X))) ;; this is the correct way
 
 
-;; (full-rewrite '(M M))
-;; (full-rewrite '(M I I I I I))
-;; (full-rewrite '(M M (I I I))) ;; as opposed to
-;; (lazy-rewrite '(M M (I I I))) ;; which is not as reduced
-;; (full-rewrite '(M (M (M (M (M (M I)))))) :max-depth 6)
-;; (full-rewrite '(M I) :max-depth 2 :print-trace t)
+(unit-test (full-rewrite '(M M)))
+(unit-test (full-rewrite '(M I I I I I)))
+
+;; compare full and lazy - lazy doesn't evaluate it's arguments
+(unit-test (full-rewrite '(M M (I I I))))
+(unit-test (lazy-rewrite '(M M (I I I))))
+
+(unit-test (full-rewrite '(M (M (M (M (M (M I)))))) :max-depth 6))
+(unit-test (full-rewrite '(M I) :max-depth 2 :print-trace t))
 
 
-;; ;; TESTS
-;; (print "-----------------")
-;; (lazy-rewrite '((comp M M) I) :print-trace 1)
+(unit-test (lazy-rewrite '(B M M I) :print-trace 1))
 
-;; ;; this a nasty example, because the rewriting diverges
-;; (lazy-rewrite '((comp M M) (comp M M)) :print-trace 1 :max-depth 20)
+;; this a nasty example, because the rewriting diverges
+(unit-test (lazy-rewrite '(B M M (B M M)) :print-trace 1 :max-depth 10))
 
-;; (lazy-rewrite '(M (M (M (M (M M)))))   :print-trace 1)
-;; (lazy-rewrite '((comp (comp M M) M) I) :print-trace 1 :max-depth 20)
 
-;; ;; a test that shows that rewrite doesn't eval everything possible
-;; (lazy-rewrite '((M M) (I I))) ;; should be (M M) I
-;; (full-rewrite '((M M) (I I))) ;; should be (M M) I
-;; (lazy-rewrite '(I I (M M)))
+(unit-test (lazy-rewrite '(M (M (M (M (M M)))))))
+(unit-test (full-rewrite '(M (M (M (M (M M)))))))
 
-;; ;; tests of simplify
-;; (list (equal 'X 
-;; 	    (simplify-expression '((((X))))))
-;;      (equal '(A B C D) 
-;; 	    (simplify-expression '(((A B) C) D)))
-;;      (equal '(A B (C D E))
-;; 	    (simplify-expression '((A B) ((C D) E)))))
+(unit-test (lazy-rewrite '(B (B M M) M I) :print-trace 1 :max-depth 16))
 
-;; (simplify-expression '((A B) C))
+;; a test that shows that rewrite doesn't eval everything possible
+(unit-test (lazy-rewrite '((M M) (I I)))) ;; should be (M M) I
+(unit-test (full-rewrite '((M M) (I I)))) ;; should be (M M) I
 
-;; (full-rewrite '(I x y))
+;; an important difference
+(unit-test (lazy-rewrite '(X (I I (M M)))))
+(unit-test (full-rewrite '(X (I I (M M)))))

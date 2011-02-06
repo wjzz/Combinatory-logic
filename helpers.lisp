@@ -1,10 +1,14 @@
 (defmacro unit-test (expr)
-  `(progn 
-     (write ',expr)
-     (format t "~%")
-     (write ,expr)
-     (format t "~%~%")
-     ,expr))
+  (let 
+      ((e (gensym)))    
+    `(progn 	 
+       (write ',expr)
+       (let ((,e ,expr))
+	 (progn 
+	   (format t "~%")
+	   (write ,e)
+	   (format t "~%~%")
+	   ,e)))))
 
 
 

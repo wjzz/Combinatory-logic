@@ -1,13 +1,17 @@
+(defparameter *verbose-unit-test* nil)
+
 (defmacro unit-test (expr)
   (let 
       ((e (gensym)))    
     `(progn 	 
-       (write ',expr)
+       (when *verbose-unit-test* 
+	 (write ',expr)
+	 (format t "~%"))
        (let ((,e ,expr))
 	 (progn 
-	   (format t "~%")
-	   (write ,e)
-	   (format t "~%~%")
+	   (when *verbose-unit-test*
+	     (write ,e)
+	     (format t "~%~%"))
 	   ,e)))))
 
 

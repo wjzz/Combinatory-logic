@@ -12,13 +12,16 @@
 
 
 
-(defun reify (spec)
+(defun reify (spec &key verbose)
   (let ((max-count (specification-count-to spec))
 	(find-all? (eql 'all (specification-search-type spec))))
     
     (defun reify-iter (count)
       (if (> count max-count)
-	  nil
+	nil
+	(progn
+	  (when verbose
+	    (format t "Checking with count = ~d~%" count))
 	  (let* ((candidates (generate-combs count (specification-using spec)))
 		 (passed (remove-if-not (lambda (comb) (try-candidate spec comb))
 					candidates)))
@@ -30,7 +33,7 @@
 		   (first passed))
 
 		  ;; try harder
-		  (t (reify-iter (1+ count)))))))
+		  (t (reify-iter (1+ count))))))))
 		  
     (reify-iter (specification-count-from spec))))
 

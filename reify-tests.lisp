@@ -2,6 +2,8 @@
 
 ; (load "example-combinators.lisp")
 
+(setf *verbose-unit-test* t)
+
 (reset-def-db)
 (rcomb S x y z = x z (y z))
 (rcomb K x y = x)
@@ -18,7 +20,10 @@
 (rcomb C x y z = x z y)
 (rcomb T x y   = y x)
 
-(unit-test (reify 
-	    (express C :using (B T)
-		       :count-to 8
-	    )))
+(defvar church-1941
+  (express C :using (B T)
+	   :count-to 8
+	   ))
+
+;; 11s when compiled  
+(unit-test (reify church-1941 :verbose t))

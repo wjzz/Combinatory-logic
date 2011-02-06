@@ -15,7 +15,7 @@ B2 x y z w y = x y z (w v)
 B3 x y z w = x (y (z w))
 D2 x y z w v = x (y z) (w v)
 
-S x y z = x y (x z)
+S x y z = x z (y z)
 
 ; Simple implementation queries
 

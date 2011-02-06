@@ -1,25 +1,24 @@
 (load "reify.lisp")
 
-(load "example-combinators.lisp")
+; (load "example-combinators.lisp")
 
-(let ((spec (express I :using (S K) :count-from 4 :count-to 5)))
+(reset-def-db)
+(rcomb S x y z = x z (y z))
+(rcomb K x y = x)
+(rcomb I x = x)
+
+(let ((spec (express I :using (S K) :count-from 3 :count-to 4)))
   (reify spec))
 
-(unit-test (reify (build-comb X :such-that (X Y = X) :using (S K))))
-
-;; (setf B (spec (x y z) (x (y z)) (B)))
-;; ; (reify B)
+(unit-test (reify (build-comb X :such-that (X a = a) :search-type first :using (S K))))
 
 
-;; (setf D (spec (x y z w)
-;; 	     (x y (z w))
-;; 	     (B)))
+(reset-def-db) 
+(rcomb B x y z = x (y z))
+(rcomb C x y z = x z y)
+(rcomb T x y   = y x)
 
-;; ; (reify D)
-
-
-;; (setf triple (spec (x y z w)
-;; 		   (x (y z w))
-;; 		   (B)))
-;; ; (reify triple)
-
+(unit-test (reify 
+	    (express C :using (B T)
+		       :count-to 8
+	    )))

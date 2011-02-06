@@ -25,7 +25,7 @@
 		      :body       ',numbered-body)))
 
 
-;; TESTS
+
 (unit-test (comb B x y z = x (y z)))
 (unit-test (comb T x y z = x z y))
 (unit-test (comb M x = x x))

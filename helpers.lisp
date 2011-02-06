@@ -5,7 +5,8 @@
      (write ,expr)
      (format t "~%~%")
      ,expr))
-;  `,expr)
+
+
 
 (defun partition-list (lst &optional before after seen-eq)
   "Breaks the given list into parts before and after the = character. The = itself is not included."
@@ -28,6 +29,7 @@
  (partition-list '(X Y = Y (X X))))
 
 
+
 (defun range (first last)
   "Returns a list containing all intergers from first to last, inclusice"
   (let ((result nil))
@@ -41,6 +43,8 @@
 (unit-test (range 1 10))
 (unit-test (range 5 2))
 
+
+
 (defun range-from-zero (last)
   "Returns a list containing all integers from 0 to last, exclusive."
   (let
@@ -49,6 +53,7 @@
       (push value result))))
 
 (unit-test (range-from-zero 5))
+
 
 
 (defun break-at (n lst)
@@ -63,6 +68,7 @@
 (unit-test (break-at 4 (range-from-zero 10)))
 (unit-test (break-at 5 '(1 2 3)))
 
+
 ;; ---------------------
 ;; --  SUBSTITUTIONS  --
 ;; ---------------------
@@ -70,6 +76,7 @@
 (defun get-value (parameter environment)
   "Get the value bound to the given parameter in the given environment."
   (gethash parameter environment))
+
 
 
 (defun create-environment (parameters values)
@@ -80,7 +87,7 @@ It is supposed that the values list is at least as long a the parameters list."
       (setf (gethash parameter m) (first values))
       (setf values (rest values)))))
 
-;; some simple tests
+
 (unit-test (progn
 	     (defvar env (create-environment '(x y z) '(1 2 1 10)))
 	     (get-value 'z env)))
@@ -116,11 +123,11 @@ values from the given environment."
 
 
 (defun mappend (f lst)
-  ;(apply #'append (mapcar f lst)))
   (reduce #'append (mapcar f lst) :initial-value nil))
 
 (unit-test 
  (mappend (lambda (x) (range-from-zero x)) '(1 2 3 4)))
+
 
 
 (defun partitions-iter (n k)
@@ -142,6 +149,8 @@ values from the given environment."
 (unit-test (partitions-iter 10 1))
 (unit-test (partitions-iter 4 3))
 
+
+
 (defun partitions (n)
   "Returns a list of all partitions of n into at least 2 non-empty stots."
   (mappend (lambda (k) (partitions-iter n k))
@@ -149,6 +158,8 @@ values from the given environment."
 		
 	   
 (unit-test (partitions 4))
+
+
 
 (defun cart-prod (lst)
   (if (null lst) 

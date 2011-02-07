@@ -10,19 +10,49 @@
 (unit-test (print-all '(1 2 3 4)))
 
 
-(defun from-left-to-right (lst)
-  (if (atom lst)
-      nil
-      (let (acc seen)
-	(dolist (e lst)
-	  (
 
-; (defun 
+(defun all-rewrites-iter (lst seen acc rule-db)
+  (loop
+     (when (null lst)
+       (return acc))
+     (let* ((results (all-rewrites (first lst) rule-db))
+	    (candidates (mapcar #'(lambda (e) 
+				    (append (reverse seen) (cons e (cdr lst))))
+				results)))
+       (setf acc (append candidates acc)))
+     (push (car lst) seen)
+     (pop lst)))
+	    
+       
 
-(defun all-rewrites (comb)
-  "Generates a list of all possible combs created by unfolding the definition of a single combinator."
-  nil)
+(defun all-rewrites (expression rule-db)
+  "Generates a list of all possible expressions created by unfolding the definition of a single combinator."
+  (cond 
+    ((atom expression)
+     nil)
+     ((atom (first expression))
+      (multiple-value-bind (e changed)
+	  (unfold-combinator expression rule-db)
+	(let ((acc (if changed 
+		       (list e)
+		       nil)))
+	  (all-rewrites-iter (rest expression)
+			     (list (first expression))
+			     acc
+			     rule-db))))     
+     (t
+      (all-rewrites-iter expression nil nil rule-db))))
 
 
-
-(unit-test (print-all (all-rewrites '(M (I I) (I X)))))
+  ;; (if (atom expression)
+  ;;     nil
+  ;;     (when (atom (first expression))
+  ;; 	  (multiple-value-bind (e changed) (unfold-combinator expression rule-db)
+  ;; 	    (when changed
+  ;; 	      (format t "by unfolding: ~a~%" e)
+  ;; 	      (push e results))))
+  ;; 	(setf results (all-rewrites-iter (rest expression)
+  ;; 					 (list (first expression))
+  ;; 					 results
+  ;; 					 rule-db))
+  ;; 	results)))

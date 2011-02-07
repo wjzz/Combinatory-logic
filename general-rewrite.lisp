@@ -7,7 +7,7 @@
   (dolist (e lst)
     (format t "~a~%" e)))
 
-(unit-test (print-all '(1 2 3 4)))
+; (unit-test (print-all '(1 2 3 4)))
 
 
 

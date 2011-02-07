@@ -2,7 +2,13 @@
 
 ; (load "example-combinators.lisp")
 
+;; SBCL --script
+;; CLISP -C 
+
 (setf *verbose-unit-test* t)
+
+
+;; A very simple example
 
 (reset-def-db)
 (rcomb S x y z = x z (y z))
@@ -12,55 +18,37 @@
 
 (defun ski ()
   
-  (let ((spec (express I :using (S K) :count-from 3 :count-to 4)))
+  (let ((spec (express I :using (S K) :count-from 1 :count-to 4)))
     (unit-test (reify spec)))
   
   (unit-test (reify (build-comb X :such-that (X a = a) :search-type all :using (S K)))))
 
-
 (unit-test (ski))
 
-(reset-def-db) 
+
+;; A non trivial example, Church have found it aroung 1941
+
+(reset-def-db)
 (rcomb B x y z = x (y z))
 (rcomb C x y z = x z y)
 (rcomb T x y   = y x)
 
 (defun church ()
 
-  (defvar church-1941
+  (let ((church-1941
     (express C :using (B T)
 	     :count-to 8
-	     ))
+	     )))
 
-  ;; 11s when compiled  
-  (unit-test (reify church-1941 :verbose t :max-depth 7)))
+  ;; 11s when compiled with CLISP
+  (unit-test (reify church-1941 :verbose t :max-depth 7))))
 
-; (church)
-
-
-(rcomb L x y = x (y y))
-
-(defun onlyLLLL ()
-
-  (defvar only-Ls 
-    (build-comb X
-	      :such-that (X X = X)
-	      :search-type first
-	      :using (L)
-	      :count-to 10
-	      :need-traces t
-	      ))
-
-  (unit-test (reify only-Ls :verbose t :max-depth 3))
-  )
-
-(unit-test (onlyLLLL))
-
-; (unit-test (length (generate-combs 12 '(L))))
+(church)
 
 
-;; an interesting example, because the rewriting diverges
+;; an interesting example, because the rewriting diverges, so a more powerful prover is needed
 
+(reset-def-db)
 (rcomb M x = x x)
 (rcomb B x y z = x (y z))
 
@@ -75,5 +63,5 @@
 			       )))
     (unit-test (reify diverging :verbose :t :max-depth 3))))
 
-; (simple-diverging) ;; WORKS!!!!!
+(simple-diverging)
 

@@ -1,0 +1,1 @@
+time sbcl --script  performance-check.lisp $1 $2 2>/dev/null

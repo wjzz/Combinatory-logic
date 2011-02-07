@@ -1,6 +1,6 @@
 (load "rewrite.lisp")
 
-(setf *verbose-unit-test* t)
+; (setf *verbose-unit-test* t)
 
 (defun print-all (lst)
   "Prints all elements of the given list, each element on a separate line."

@@ -1,0 +1,1 @@
+time clisp -C performance-check.lisp $1 $2

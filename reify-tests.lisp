@@ -47,11 +47,11 @@
 	      :such-that (X X = X)
 	      :search-type first
 	      :using (L)
-	      :count-to 12
+	      :count-to 10
 	      :need-traces t
 	      ))
 
-  (unit-test (reify only-Ls :verbose t :max-depth 0))
+  (unit-test (reify only-Ls :verbose t :max-depth 3))
   )
 
 (unit-test (onlyLLLL))

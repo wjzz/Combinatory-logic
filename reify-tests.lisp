@@ -18,7 +18,7 @@
   (unit-test (reify (build-comb X :such-that (X a = a) :search-type all :using (S K)))))
 
 
-; (unit-test (ski))
+(unit-test (ski))
 
 (reset-def-db) 
 (rcomb B x y z = x (y z))
@@ -38,7 +38,6 @@
 ; (church)
 
 
-
 (rcomb L x y = x (y y))
 
 (defun onlyLLLL ()
@@ -46,15 +45,16 @@
   (defvar only-Ls 
     (build-comb X
 	      :such-that (X X = X)
-	      :search-type all
+	      :search-type first
 	      :using (L)
 	      :count-to 12
+	      :need-traces t
 	      ))
 
-  (unit-test (reify only-Ls :verbose t :max-depth 2))
+  (unit-test (reify only-Ls :verbose t :max-depth 0))
   )
 
-; (unit-test (onlyLLLL))
+(unit-test (onlyLLLL))
 
 ; (unit-test (length (generate-combs 12 '(L))))
 
@@ -68,28 +68,12 @@
   
   (let ((diverging (build-comb X
 			       :such-that (X = X X)
-			       :search-type first
+			       :search-type all
 			       :using (M B)
+			       :need-traces t
 			       :count-to 6
 			       )))
-    (unit-test (reify diverging :verbose :t :max-depth 7))))
+    (unit-test (reify diverging :verbose :t :max-depth 3))))
 
-; (simple-diverging)
+; (simple-diverging) ;; WORKS!!!!!
 
-
-;; this a nasty example, because the rewriting diverges
-(defun prove-with-history (comb1 comb2)
-  (let
-      ((a (multiple-value-list (full-rewrite comb1 :max-depth 10)))
-       (b (multiple-value-list (full-rewrite comb2 :max-depth 10))))
-    (intersection (second a) (second b) :test #'equal)))
-
-(defvar lft '(B M M (B M M)))
-(defvar rht '((B M M (B M M))(B M M (B M M))))
-(unit-test (prove-with-history lft rht))
-
-
-(rcomb I x = x)
-(unit-test (prove-with-history '(M I) '(M (M (M I)))))
-
-(unit-test (full-rewrite '(M (M (M I)))))

@@ -15,7 +15,7 @@
   (let ((spec (express I :using (S K) :count-from 3 :count-to 4)))
     (unit-test (reify spec)))
   
-  (unit-test (reify (build-comb X :such-that (X a = a) :search-type first :using (S K)))))
+  (unit-test (reify (build-comb X :such-that (X a = a) :search-type all :using (S K)))))
 
 
 ; (unit-test (ski))

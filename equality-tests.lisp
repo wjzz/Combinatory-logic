@@ -1,6 +1,8 @@
 (load "equality.lisp")
 (load "example-combinators.lisp")
 
+(setf *verbose-unit-test* t)
+
 (unit-test (equality (x y) (y x)))
 
 
@@ -28,3 +30,11 @@
 (unit-test (prove-equality (equality (x y z) ((x y) z))))
 
 (unit-test (prove-equality (equality (B B B x y z w) (x (y z w)))))
+
+
+;; a troublesome test since it can't be proven by lazy rewriting of just anything
+(let 
+    ((bmm '(B M M (B M M))))
+  (unit-test (prove-equality-traces (make-equality-struct :left bmm :right `(,bmm ,bmm))
+				    *rules*
+				    )))

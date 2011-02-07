@@ -5,6 +5,7 @@
   :equality
   :using
   :search-type
+  :need-traces
   :count-from
   :count-to)
   
@@ -16,19 +17,20 @@
 
 
 
-(defmacro build-comb (comb-name &key such-that using (search-type 'all) (count-from 1) (count-to 3))
+(defmacro build-comb (comb-name &key such-that using (search-type 'all) need-traces (count-from 1) (count-to 3))
   `(make-specification 
     :comb-name ',comb-name
     :equality (such-that->equality ',such-that)
     :using ',using
     :search-type ',search-type
+    :need-traces ,need-traces
     :count-from ,count-from
     :count-to   ,count-to    
     ))
 
 
 
-(defmacro express (comb-name &key using (search-type 'all) (count-from 1) (count-to 3))
+(defmacro express (comb-name &key using (search-type 'all) need-traces (count-from 1) (count-to 3))
   (let*
       ;; what happens if comb is not found?
       ((comb (find-combinator comb-name (get-def-db)))
@@ -38,6 +40,7 @@
 		 :such-that (,left = ,right)
 		 :using ,using
 		 :search-type ,search-type
+		 :need-traces ,need-traces
 		 :count-from ,count-from
 		 :count-to ,count-to
 		 )))

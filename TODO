@@ -1,0 +1,26 @@
+Ideas to make the program run faster:
+
+0. abstract away the notion of sets and set operations,
+  so we won't have to change the main code
+
+1. try to reduce the number of redundant elements 
+
+2. maybe let's write our own intersection
+
+3. can we reduce the number of calls to the simplify-expression?
+
+! 4. in all-rewrites-iter we might call (reverse seen) many times in a row
+      caching it could be a small, but nice improvement
+
+5. appending is very inefficient - can we use diff-lists to improve this?
+
+!! 6. The biggest source of inefficencies seems to be in all-traces-iter
+    there is a huge amount of redundancy there -- both in computations and in the data stored in the data structures
+
+
+
+NREVERSE allows you to do exactly that. The N stands for non-consing, meaning it doesn't need to allocate any new cons cells. The exact side effects of NREVERSE are intentionally not specified--it's allowed to modify any CAR or CDR of any cons cell in the list--but a typical implementation might walk down the list changing the CDR of each cons cell to point to the previous cons cell, eventually returning the cons cell that was previously the last cons cell in the old list and is now the head of the reversed list. No new cons cells need to be allocated, and no garbage is created.
+
+
+
+One last gotcha to watch out for is that the sorting functions SORT, STABLE-SORT, and MERGE mentioned in Chapter 11 are also recycling functions when applied to lists.10 However, these functions don't have nondestructive counterparts, so if you need to sort a list without destroying it, you need to pass the sorting function a copy made with COPY-LIST. In either case you need to be sure to save the result of the sorting function because the original argument is likely to be in tatters. For instance:

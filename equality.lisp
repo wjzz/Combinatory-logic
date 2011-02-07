@@ -51,7 +51,9 @@
   (if (zerop depth)
       (equality-truep thm)
       (let
-	  ((modified-thm (map-equality thm (lambda (e)(all-traces e rule-db depth)))))
+	  ((modified-thm (map-equality thm 
+				       (lambda (e)
+					 (all-traces e rule-db depth)))))
 	(intersection (equality-struct-left  modified-thm)
 		      (equality-struct-right modified-thm)
 		      :test #'equal
@@ -64,5 +66,3 @@
       (if (traces-prove thm rule-db depth)
 	  'success
 	  (prove-equality-traces thm rule-db max-depth (1+ depth)))))
-	
-	   

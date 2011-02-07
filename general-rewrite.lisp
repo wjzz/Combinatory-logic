@@ -44,12 +44,6 @@
       (all-rewrites-iter expression nil nil rule-db))))
 
 
-(defun all-rewrites-many (expression rule-db count)
-  "Iterates the all-rewrite function count times."
-  (if (zerop count)
-      (list expression)
-      (mappend (lambda (e) (all-rewrites-many e rule-db (1- count)))
-	       (all-rewrites expression rule-db))))
 
 (defun all-traces (expression rule-db max-depth)
   (defun all-traces-iter (exps depth)
@@ -61,3 +55,14 @@
 			 (1- depth))))
   (remove-duplicates (all-traces-iter (list expression) max-depth)
 		     :test #'equal))
+
+
+
+
+;; (defun all-rewrites-many (expression rule-db count)
+;;   "Iterates the all-rewrite function count times."
+;;   (if (zerop count)
+;;       (list expression)
+;;       (mappend (lambda (e) (all-rewrites-many e rule-db (1- count)))
+;; 	       (all-rewrites expression rule-db))))
+

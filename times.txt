@@ -1,0 +1,37 @@
+Checking with count = 1 and max-depth = 8 
+Checking with count = 2 and max-depth = 8 
+Checking with count = 3 and max-depth = 8 
+
+real	0m22.740s
+user	0m22.170s
+sys	0m0.570s
+Checking with count = 1 and max-depth = 3 
+Checking with count = 2 and max-depth = 3 
+Checking with count = 3 and max-depth = 3 
+Checking with count = 4 and max-depth = 3 
+Checking with count = 5 and max-depth = 3 
+Checking with count = 6 and max-depth = 3 
+Checking with count = 7 and max-depth = 3 
+Checking with count = 8 and max-depth = 3 
+Checking with count = 9 and max-depth = 3 
+Checking with count = 10 and max-depth = 3 
+
+real	0m37.642s
+user	0m36.530s
+sys	0m1.110s
+Checking with count = 1 and max-depth = 2 
+Checking with count = 2 and max-depth = 2 
+Checking with count = 3 and max-depth = 2 
+Checking with count = 4 and max-depth = 2 
+Checking with count = 5 and max-depth = 2 
+Checking with count = 6 and max-depth = 2 
+Checking with count = 7 and max-depth = 2 
+Checking with count = 8 and max-depth = 2 
+Checking with count = 9 and max-depth = 2 
+Checking with count = 10 and max-depth = 2 
+Checking with count = 11 and max-depth = 2 
+Checking with count = 12 and max-depth = 2 
+
+real	1m15.575s
+user	1m13.860s
+sys	0m1.710s

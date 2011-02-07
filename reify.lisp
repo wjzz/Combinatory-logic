@@ -27,7 +27,7 @@
 	nil
 	(progn
 	  (when verbose
-	    (format t "Checking with count = ~d~%" count))
+	    (format t "Checking with count = ~d and max-depth = ~d ~%" count max-depth))
 	  (let* ((candidates (generate-combs count (specification-using spec)))
 		 (passed (remove-if-not (lambda (comb) (try-candidate spec 
 								      comb

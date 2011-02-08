@@ -1,5 +1,7 @@
 (load "rewrite.lisp")
 
+(load "sets.lisp")
+
 ; (setf *verbose-unit-test* t)
 
 (defun print-all (lst)
@@ -17,7 +19,8 @@
        (return acc))
      (let* ((results (all-rewrites (first lst) rule-db))
 	    (candidates (mapcar #'(lambda (e) 
-				    (append (reverse seen) (cons e (cdr lst))))
+				    (append
+				     (reverse seen) (cons e (cdr lst))))
 				results)))
        (setf acc (append candidates acc)))
      (push (car lst) seen)
@@ -45,29 +48,33 @@
 
 
 
-(defun all-traces (expression rule-db max-depth)
-  (defun all-traces-iter (exps depth)
-    (if (zerop depth)
-	exps
-	(all-traces-iter (append exps
-				 (mappend (lambda (e) (all-rewrites e rule-db))
-				  exps))
-			 (1- depth))))
-  (remove-duplicates (all-traces-iter (list expression) max-depth)
-		     :test #'equal))
+;; (defun all-traces (expression rule-db max-depth)
+;;   (defun all-traces-iter (exps depth)
+;;     (if (zerop depth)
+;; 	exps
+;; 	(all-traces-iter (append exps
+;; 				 (mappend (lambda (e) (all-rewrites e rule-db))
+;; 				  exps))
+;; 			 (1- depth))))
+;;   (remove-duplicates (all-traces-iter (list expression) max-depth)
+;; 		     :test #'equal))
 
 
 (defun all-tracesn (expression rule-db max-depth)
   (defun all-traces-iter (old new depth)
     (if (or (= depth max-depth)
 	    (null new))
-	old
+	;(progn (format t "size(old) = ~d~%" (length old))
+	       old
+	       ;)
 	(let*
 	    ;; should we call remove-duplicates on it?
 	    ((expanded-fringe (remove-duplicates (mappend (lambda (e) (all-rewrites e rule-db))
 							  new)
 						 :test #'equal))
-	     (nnew (set-difference expanded-fringe old))
-	     (nold (union old expanded-fringe)))
+	     ;(nnew (set-difference expanded-fringe old))
+	     (nnew (nset-difference expanded-fringe old))
+	     ;(nold (union old expanded-fringe)))
+	     (nold (union old nnew)))
 	  (all-traces-iter nold nnew (1+ depth)))))
   (all-traces-iter (list expression) (list expression) 0))

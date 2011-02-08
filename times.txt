@@ -167,5 +167,25 @@ Checking with count = 12 and max-depth = 3
 real	3m52.348s
 user	3m48.610s
 
+;; after many tweeks
+
+wjzz@ubuntu:~/Dropbox/Programy/Lisp/CombLogic$ ./runs 12 3
+Checking with count = 1 and max-depth = 3 
+Checking with count = 2 and max-depth = 3 
+Checking with count = 3 and max-depth = 3 
+Checking with count = 4 and max-depth = 3 
+Checking with count = 5 and max-depth = 3 
+Checking with count = 6 and max-depth = 3 
+Checking with count = 7 and max-depth = 3 
+Checking with count = 8 and max-depth = 3 
+Checking with count = 9 and max-depth = 3 
+Checking with count = 10 and max-depth = 3 
+Checking with count = 11 and max-depth = 3 
+Checking with count = 12 and max-depth = 3 
+
+real	0m18.616s
+user	0m18.200s
+sys	0m0.410s
+
 
 

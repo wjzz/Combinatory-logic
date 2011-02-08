@@ -54,48 +54,21 @@
   (if (zerop depth)
       (equality-truep thm)
       (let
-	  ((left  
-	    ;nil)
+	  ((left-expansions
 	    (all-traces (equality-struct-left thm) rule-db depth))
+
+	   ;; We only try to expand the left sides
+	   ;; This might break the completeness of the search
 	   (right 
 	    nil)
 	   )
-	(st-member
-	 (equality-struct-right thm)
-		left
-		:test #'equal)
+	(st-member (equality-struct-right thm)
+		   left-expansions)
 	)))
 
 (defun prove-equality-traces (thm rule-db &optional (max-depth 3) (depth 0))
   (traces-prove thm rule-db max-depth))
 
 
-	    ;(all-tracesn (equality-struct-right thm) rule-db depth))
-	  ;; ((modified-thm (map-equality thm 
-	  ;; 			       (lambda (e)
-	  ;; 				 ;; changed all-traces to all-tracesn
-	  ;; 				 (all-tracesn e rule-db depth)))))
-
-;; 	(intersection ;(equality-struct-left  modified-thm)
-;; 		      ;(equality-struct-right modified-thm)
-;; 		      ; this is a dangerous trick, it may make some theorems unprovable
-;; 		      ; (list (equality-struct-right thm))
-;; ;		      (list (equality-struct-left thm))
-;; ;		      (list (equality-struct-right thm))
-;; 	              left
-;; 		      (list (equality-struct-right thm))
-;; 		      ;right
-;; 		      :test #'equal
-		      
-;; 		      ; :key #'simplify-expression
-;		      )))
-
-
-;; (defun prove-equality-traces (thm rule-db &optional (max-depth 3) (depth 0))
-;;   (if (> depth max-depth)
-;;       nil
-;;       (if (traces-prove thm rule-db depth)
-;; 	  'success
-;; 	  (prove-equality-traces thm rule-db max-depth (1+ depth)))))
 
 

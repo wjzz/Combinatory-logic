@@ -5,7 +5,7 @@
 ;; SBCL --script
 ;; CLISP -C 
 
-(setf *verbose-unit-test* t)
+(setf *verbose-unit-test* nil)
 
 
 ;; A very simple example
@@ -41,8 +41,9 @@
 	     )))
 
   ;; 11s when compiled with CLISP
-  (unit-test (reify church-1941 :verbose t :max-depth 7))))
+  (unit-test (reify church-1941 :verbose nil :max-depth 7))))
 
+(setf *verbose-unit-test* t)
 (church)
 
 
@@ -61,7 +62,8 @@
 			       :need-traces t
 			       :count-to 6
 			       )))
-    (unit-test (reify diverging :verbose :t :max-depth 3))))
+    (unit-test (reify diverging :verbose nil :max-depth 3))))
 
+(setf *verbose-unit-test* t)
 (simple-diverging)
 

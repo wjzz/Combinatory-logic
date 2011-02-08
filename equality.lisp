@@ -47,24 +47,47 @@
     (prove-equality-by-rewriting thm max-depth rewrite-func)))
 
 
+
+;; PROVING PROCEDURES FOR DIVERGING EXPRESSIONS
+
 (defun traces-prove (thm rule-db depth)
   (if (zerop depth)
       (equality-truep thm)
       (let
-	  ((modified-thm (map-equality thm 
-				       (lambda (e)
-					 ;; changed all-traces to all-tracesn
-					 (all-tracesn e rule-db depth)))))
-	(intersection ;(equality-struct-left  modified-thm)
-		      ;(equality-struct-right modified-thm)
-		      ; this is a dangerous trick, it may make some theorems unprovable
-		      ; (list (equality-struct-right thm))
-		      (list (equality-struct-left thm))
-		      (list (equality-struct-right thm))
-		      :test #'equal
+	  ((left  
+	    ;nil)
+	    (all-tracesn (equality-struct-left thm) rule-db depth))
+	   (right 
+	    nil)
+	   )
+	(member (equality-struct-right thm)
+		left
+		:test #'equal)
+	)))
+
+(defun prove-equality-traces (thm rule-db &optional (max-depth 3) (depth 0))
+  (traces-prove thm rule-db max-depth))
+
+
+	    ;(all-tracesn (equality-struct-right thm) rule-db depth))
+	  ;; ((modified-thm (map-equality thm 
+	  ;; 			       (lambda (e)
+	  ;; 				 ;; changed all-traces to all-tracesn
+	  ;; 				 (all-tracesn e rule-db depth)))))
+
+;; 	(intersection ;(equality-struct-left  modified-thm)
+;; 		      ;(equality-struct-right modified-thm)
+;; 		      ; this is a dangerous trick, it may make some theorems unprovable
+;; 		      ; (list (equality-struct-right thm))
+;; ;		      (list (equality-struct-left thm))
+;; ;		      (list (equality-struct-right thm))
+;; 	              left
+;; 		      (list (equality-struct-right thm))
+;; 		      ;right
+;; 		      :test #'equal
 		      
-		      ; :key #'simplify-expression
-		      ))))
+;; 		      ; :key #'simplify-expression
+;		      )))
 
 
 ;; (defun prove-equality-traces (thm rule-db &optional (max-depth 3) (depth 0))
@@ -75,5 +98,3 @@
 ;; 	  (prove-equality-traces thm rule-db max-depth (1+ depth)))))
 
 
-(defun prove-equality-traces (thm rule-db &optional (max-depth 3) (depth 0))
-  (traces-prove thm rule-db max-depth))

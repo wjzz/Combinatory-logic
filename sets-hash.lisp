@@ -25,7 +25,7 @@
 (defun hst-union! (set1 set2)
   "Will destroy set1"
   (loop for key being the hash-keys of set2
-       do (setf (geshash key set1) t))
+       do (setf (gethash key set1) t))
   set1)
 
 (defun hst-empty? (set)
@@ -40,3 +40,20 @@
 
 ; (setf *verbose-unit-test* t)
 
+(unit-test (list->hst '(a b c a)))
+
+(unit-test (hst-member 'a (list->hst '(a b c a))))
+(unit-test (hst-member 'a (list->hst '(b c d))))
+
+(unit-test (hst-union-with-list! (list->hst '(a b c d)) '(e)))
+
+(unit-test (hst-difference! (list->hst '(a b c d))
+			    (list->hst '(a d))))
+
+(unit-test (hst-union! (list->hst '(a b c d))
+		       (list->hst '(a e d f))))
+
+(unit-test (hst-empty? (hst-empty)))
+(unit-test (hst-empty? (list->hst '(1 2 3))))
+
+(hst-singleton '(a (b c d)))

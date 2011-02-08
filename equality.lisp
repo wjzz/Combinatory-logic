@@ -60,7 +60,8 @@
 	   (right 
 	    nil)
 	   )
-	(member (equality-struct-right thm)
+	(st-member
+	 (equality-struct-right thm)
 		left
 		:test #'equal)
 	)))

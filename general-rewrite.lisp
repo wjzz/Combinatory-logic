@@ -1,6 +1,7 @@
 (load "rewrite.lisp")
 
 (load "sets.lisp")
+;(load "sets-hash.lisp")
 
 ; (setf *verbose-unit-test* t)
 
@@ -60,24 +61,24 @@
 ;; 		     :test #'equal))
 
 
-(defun all-tracesn (expression rule-db max-depth)
-  (defun all-traces-iter (old new depth)
-    (if (or (= depth max-depth)
-	    (null new))
-	;(progn (format t "size(old) = ~d~%" (length old))
-	       old
-	       ;)
-	(let*
-	    ;; should we call remove-duplicates on it?
-	    ((expanded-fringe (remove-duplicates (mappend (lambda (e) (all-rewrites e rule-db))
-							  new)
-						 :test #'equal))
-	     ;(nnew (set-difference expanded-fringe old))
-	     (nnew (nset-difference expanded-fringe old))
-	     ;(nold (union old expanded-fringe)))
-	     (nold (union old nnew)))
-	  (all-traces-iter nold nnew (1+ depth)))))
-  (all-traces-iter (list expression) (list expression) 0))
+;; (defun all-tracesn (expression rule-db max-depth)
+;;   (defun all-traces-iter (old new depth)
+;;     (if (or (= depth max-depth)
+;; 	    (null new))
+;; 	;(progn (format t "size(old) = ~d~%" (length old))
+;; 	       old
+;; 	       ;)
+;; 	(let*
+;; 	    ;; should we call remove-duplicates on it?
+;; 	    ((expanded-fringe (remove-duplicates (mappend (lambda (e) (all-rewrites e rule-db))
+;; 							  new)
+;; 						 :test #'equal))
+;; 	     ;(nnew (set-difference expanded-fringe old))
+;; 	     (nnew (nset-difference expanded-fringe old))
+;; 	     ;(nold (union old expanded-fringe)))
+;; 	     (nold (union old nnew)))
+;; 	  (all-traces-iter nold nnew (1+ depth)))))
+;;   (all-traces-iter (list expression) (list expression) 0))
 
 
 (defun all-traces (expression rule-db max-depth)
@@ -88,19 +89,6 @@
 	  (setf result (st-union expanded result))))
       result))
 	  
-
-    ;; (let (result)
-    ;;   (dolist (e new)
-    ;; 	(let ((expanded (all-rewrites e rule-db)))
-    ;; 	  (setf result (append expanded result))))
-    ;;   (remove-duplicates result :test #'equal)))
-
-
-    ;; (remove-duplicates (mappend (lambda (e) (all-rewrites e 
-    ;; 							  rule-db))
-    ;; 							  new)
-    ;; 						 :test #'equal))
-
   (defun all-traces-iter (old new depth)
     (if (or (= depth max-depth)
 	    (st-empty? new))
@@ -115,21 +103,24 @@
 
 ;; a version with hash-tables
 
-(defun all-tracesh (expression rule-db max-depth)
-  (defun expand-fringe (new)
-    (let ((result (hst-empty)))
-      (dolist (e new)
-	(let ((expanded (all-rewrites e rule-db)))
-	  (setf result (hst-union-with-list! result expanded))))
-      result))
+;; (defun all-tracesh (expression rule-db max-depth)
+;;   "Returns a hash-table."
+;;   (defun expand-fringe (new)
+;;     (let ((result (hst-empty)))
+;; ;      (dolist (e new)
+;;       (loop for e being the hash-keys of new
+;; 	 do
+;; 	   (let ((expanded (all-rewrites e rule-db)))
+;; 	     (setf result (hst-union-with-list! result expanded))))
+;;       result))
 	  
-  (defun all-traces-iter (old new depth)
-    (if (or (= depth max-depth)
-	    (hst-empty? new))
-	old
-	(let*
-	    ((expanded-fringe (expand-fringe new))
-	     (nnew (hst-difference! expanded-fringe old))
-	     (nold (hst-union! old nnew)))
-	  (all-traces-iter nold nnew (1+ depth)))))
-  (all-traces-iter (hst-singleton expression) (hst-singleton expression) 0))
+;;   (defun all-traces-iter (old new depth)
+;;     (if (or (= depth max-depth)
+;; 	    (hst-empty? new))
+;; 	old
+;; 	(let*
+;; 	    ((expanded-fringe (expand-fringe new))
+;; 	     (nnew (hst-difference! expanded-fringe old))
+;; 	     (nold (hst-union! old nnew)))
+;; 	  (all-traces-iter nold nnew (1+ depth)))))
+;;   (all-traces-iter (hst-singleton expression) (hst-singleton expression) 0))

@@ -56,7 +56,7 @@
       (let
 	  ((left  
 	    ;nil)
-	    (all-tracesn (equality-struct-left thm) rule-db depth))
+	    (all-traces (equality-struct-left thm) rule-db depth))
 	   (right 
 	    nil)
 	   )

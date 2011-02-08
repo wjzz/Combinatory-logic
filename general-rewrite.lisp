@@ -78,3 +78,58 @@
 	     (nold (union old nnew)))
 	  (all-traces-iter nold nnew (1+ depth)))))
   (all-traces-iter (list expression) (list expression) 0))
+
+
+(defun all-traces (expression rule-db max-depth)
+  (defun expand-fringe (new)
+    (let ((result st-empty))
+      (dolist (e new)
+	(let ((expanded (list->st (all-rewrites e rule-db))))
+	  (setf result (st-union expanded result))))
+      result))
+	  
+
+    ;; (let (result)
+    ;;   (dolist (e new)
+    ;; 	(let ((expanded (all-rewrites e rule-db)))
+    ;; 	  (setf result (append expanded result))))
+    ;;   (remove-duplicates result :test #'equal)))
+
+
+    ;; (remove-duplicates (mappend (lambda (e) (all-rewrites e 
+    ;; 							  rule-db))
+    ;; 							  new)
+    ;; 						 :test #'equal))
+
+  (defun all-traces-iter (old new depth)
+    (if (or (= depth max-depth)
+	    (st-empty? new))
+	old
+	(let*
+	    ((expanded-fringe (expand-fringe new))
+	     (nnew (st-difference expanded-fringe old))
+	     (nold (st-union old nnew)))
+	  (all-traces-iter nold nnew (1+ depth)))))
+  (all-traces-iter (st-singleton expression) (st-singleton expression) 0))
+
+
+;; a version with hash-tables
+
+(defun all-tracesh (expression rule-db max-depth)
+  (defun expand-fringe (new)
+    (let ((result (hst-empty)))
+      (dolist (e new)
+	(let ((expanded (all-rewrites e rule-db)))
+	  (setf result (hst-union-with-list! result expanded))))
+      result))
+	  
+  (defun all-traces-iter (old new depth)
+    (if (or (= depth max-depth)
+	    (hst-empty? new))
+	old
+	(let*
+	    ((expanded-fringe (expand-fringe new))
+	     (nnew (hst-difference! expanded-fringe old))
+	     (nold (hst-union! old nnew)))
+	  (all-traces-iter nold nnew (1+ depth)))))
+  (all-traces-iter (hst-singleton expression) (hst-singleton expression) 0))

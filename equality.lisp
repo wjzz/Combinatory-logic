@@ -59,16 +59,15 @@
 
 	   ;; We only try to expand the left sides
 	   ;; This might break the completeness of the search
+	   (right-expansions
+	    (all-traces (equality-struct-right thm) rule-db depth))
 	   (right 
 	    nil)
 	   )
-	(st-member (equality-struct-right thm)
-		   left-expansions)
+	(intersection left-expansions right-expansions :test #'equal)
+;	(st-member (equality-struct-right thm)
+;		   left-expansions)
 	)))
 
 (defun prove-equality-traces (thm rule-db &optional (max-depth 3) (depth 0))
   (traces-prove thm rule-db max-depth))
-
-
-
-

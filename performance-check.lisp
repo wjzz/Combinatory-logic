@@ -14,7 +14,7 @@
 (defun onlyLLLL (&optional (count-to 5) (max-depth 2))
   (let ((only-Ls 
 	 (build-comb X
-		     :such-that (X X = X)
+		     :such-that (X = X X)
 		     :search-type first
 		     :using (L)
 		     :count-to count-to

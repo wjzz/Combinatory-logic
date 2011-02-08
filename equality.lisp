@@ -53,16 +53,27 @@
       (let
 	  ((modified-thm (map-equality thm 
 				       (lambda (e)
-					 (all-traces e rule-db depth)))))
-	(intersection (equality-struct-left  modified-thm)
-		      (equality-struct-right modified-thm)
+					 ;; changed all-traces to all-tracesn
+					 (all-tracesn e rule-db depth)))))
+	(intersection ;(equality-struct-left  modified-thm)
+		      ;(equality-struct-right modified-thm)
+		      ; this is a dangerous trick, it may make some theorems unprovable
+		      ; (list (equality-struct-right thm))
+		      (list (equality-struct-left thm))
+		      (list (equality-struct-right thm))
 		      :test #'equal
-		      :key #'simplify-expression))))
+		      
+		      ; :key #'simplify-expression
+		      ))))
+
+
+;; (defun prove-equality-traces (thm rule-db &optional (max-depth 3) (depth 0))
+;;   (if (> depth max-depth)
+;;       nil
+;;       (if (traces-prove thm rule-db depth)
+;; 	  'success
+;; 	  (prove-equality-traces thm rule-db max-depth (1+ depth)))))
 
 
 (defun prove-equality-traces (thm rule-db &optional (max-depth 3) (depth 0))
-  (if (> depth max-depth)
-      nil
-      (if (traces-prove thm rule-db depth)
-	  'success
-	  (prove-equality-traces thm rule-db max-depth (1+ depth)))))
+  (traces-prove thm rule-db max-depth))

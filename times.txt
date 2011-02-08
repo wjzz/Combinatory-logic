@@ -35,3 +35,137 @@ Checking with count = 12 and max-depth = 2
 real	1m15.575s
 user	1m13.860s
 sys	0m1.710s
+
+; after 1st tuning
+
+wjzz@ubuntu:~/Dropbox/Programy/Lisp/CombLogic$ ./runs 12 2
+Checking with count = 1 and max-depth = 2 
+Checking with count = 2 and max-depth = 2 
+Checking with count = 3 and max-depth = 2 
+Checking with count = 4 and max-depth = 2 
+Checking with count = 5 and max-depth = 2 
+Checking with count = 6 and max-depth = 2 
+Checking with count = 7 and max-depth = 2 
+Checking with count = 8 and max-depth = 2 
+Checking with count = 9 and max-depth = 2 
+Checking with count = 10 and max-depth = 2 
+Checking with count = 11 and max-depth = 2 
+Checking with count = 12 and max-depth = 2 
+
+real	1m10.350s
+user	1m8.640s
+sys	0m1.710s
+
+; after 2nd tuning
+
+wjzz@ubuntu:~/Dropbox/Programy/Lisp/CombLogic$ ./runs 12 2
+Checking with count = 1 and max-depth = 2 
+Checking with count = 2 and max-depth = 2 
+Checking with count = 3 and max-depth = 2 
+Checking with count = 4 and max-depth = 2 
+Checking with count = 5 and max-depth = 2 
+Checking with count = 6 and max-depth = 2 
+Checking with count = 7 and max-depth = 2 
+Checking with count = 8 and max-depth = 2 
+Checking with count = 9 and max-depth = 2 
+Checking with count = 10 and max-depth = 2 
+Checking with count = 11 and max-depth = 2 
+Checking with count = 12 and max-depth = 2 
+
+real	1m3.407s
+user	1m2.040s
+sys	0m1.360s
+
+; after 3rd tuning (removed [probably] uleless simplify-expression calls)
+
+wjzz@ubuntu:~/Dropbox/Programy/Lisp/CombLogic$ ./runs 12 2
+Checking with count = 1 and max-depth = 2 
+Checking with count = 2 and max-depth = 2 
+Checking with count = 3 and max-depth = 2 
+Checking with count = 4 and max-depth = 2 
+Checking with count = 5 and max-depth = 2 
+Checking with count = 6 and max-depth = 2 
+Checking with count = 7 and max-depth = 2 
+Checking with count = 8 and max-depth = 2 
+Checking with count = 9 and max-depth = 2 
+Checking with count = 10 and max-depth = 2 
+Checking with count = 11 and max-depth = 2 
+Checking with count = 12 and max-depth = 2 
+
+real	0m31.200s
+user	0m30.590s
+sys	0m0.610s
+
+wjzz@ubuntu:~/Dropbox/Programy/Lisp/CombLogic$ ./runs 11 3
+Checking with count = 1 and max-depth = 3 
+Checking with count = 2 and max-depth = 3 
+Checking with count = 3 and max-depth = 3 
+Checking with count = 4 and max-depth = 3 
+Checking with count = 5 and max-depth = 3 
+Checking with count = 6 and max-depth = 3 
+Checking with count = 7 and max-depth = 3 
+Checking with count = 8 and max-depth = 3 
+Checking with count = 9 and max-depth = 3 
+Checking with count = 10 and max-depth = 3 
+Checking with count = 11 and max-depth = 3 
+
+real	0m51.725s
+user	0m50.960s
+sys	0m0.760s
+
+Checking with count = 1 and max-depth = 3 
+Checking with count = 2 and max-depth = 3 
+Checking with count = 3 and max-depth = 3 
+Checking with count = 4 and max-depth = 3 
+Checking with count = 5 and max-depth = 3 
+Checking with count = 6 and max-depth = 3 
+Checking with count = 7 and max-depth = 3 
+Checking with count = 8 and max-depth = 3 
+Checking with count = 9 and max-depth = 3 
+Checking with count = 10 and max-depth = 3 
+Checking with count = 11 and max-depth = 3 
+Checking with count = 12 and max-depth = 3 
+
+real	4m29.797s
+user	4m25.920s
+sys	0m3.860s
+
+; after only expanding the left side
+
+wjzz@ubuntu:~/Dropbox/Programy/Lisp/CombLogic$ ./runs 12 2
+Checking with count = 1 and max-depth = 2 
+Checking with count = 2 and max-depth = 2 
+Checking with count = 3 and max-depth = 2 
+Checking with count = 4 and max-depth = 2 
+Checking with count = 5 and max-depth = 2 
+Checking with count = 6 and max-depth = 2 
+Checking with count = 7 and max-depth = 2 
+Checking with count = 8 and max-depth = 2 
+Checking with count = 9 and max-depth = 2 
+Checking with count = 10 and max-depth = 2 
+Checking with count = 11 and max-depth = 2 
+Checking with count = 12 and max-depth = 2 
+
+real	0m27.039s
+user	0m26.330s
+sys	0m0.710s
+
+wjzz@ubuntu:~/Dropbox/Programy/Lisp/CombLogic$ ./runs 12 3
+Checking with count = 1 and max-depth = 3 
+Checking with count = 2 and max-depth = 3 
+Checking with count = 3 and max-depth = 3 
+Checking with count = 4 and max-depth = 3 
+Checking with count = 5 and max-depth = 3 
+Checking with count = 6 and max-depth = 3 
+Checking with count = 7 and max-depth = 3 
+Checking with count = 8 and max-depth = 3 
+Checking with count = 9 and max-depth = 3 
+Checking with count = 10 and max-depth = 3 
+Checking with count = 11 and max-depth = 3 
+Checking with count = 12 and max-depth = 3 
+
+real	3m52.348s
+user	3m48.610s
+
+
+

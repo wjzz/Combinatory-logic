@@ -57,12 +57,17 @@
 		     :test #'equal))
 
 
-
-
-;; (defun all-rewrites-many (expression rule-db count)
-;;   "Iterates the all-rewrite function count times."
-;;   (if (zerop count)
-;;       (list expression)
-;;       (mappend (lambda (e) (all-rewrites-many e rule-db (1- count)))
-;; 	       (all-rewrites expression rule-db))))
-
+(defun all-tracesn (expression rule-db max-depth)
+  (defun all-traces-iter (old new depth)
+    (if (or (= depth max-depth)
+	    (null new))
+	old
+	(let*
+	    ;; should we call remove-duplicates on it?
+	    ((expanded-fringe (remove-duplicates (mappend (lambda (e) (all-rewrites e rule-db))
+							  new)
+						 :test #'equal))
+	     (nnew (set-difference expanded-fringe old))
+	     (nold (union old expanded-fringe)))
+	  (all-traces-iter nold nnew (1+ depth)))))
+  (all-traces-iter (list expression) (list expression) 0))

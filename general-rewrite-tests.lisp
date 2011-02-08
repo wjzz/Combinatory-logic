@@ -32,3 +32,5 @@
 ;; YEAH !!!!!
 (intersection a b :test #'equal :key #'simplify-expression)
 
+
+(unit-test (print-all (all-tracesn '(I (M X)) *rules* 3)))
